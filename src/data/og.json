@@ -1,0 +1,20 @@
+{
+ "accent": "#AA151B",
+ "symbol": "eclair",
+ "variants": [
+  {
+   "file": "og-es.png",
+   "title": "Precio de la luz hoy\ncon impuestos",
+   "subtitle": "PVPC hora a hora · IVA e impuesto eléctrico incluidos · datos de Red Eléctrica",
+   "badge": "2026",
+   "brand": "Precio Luz Real"
+  },
+  {
+   "file": "og-en.png",
+   "title": "Electricity price in Spain\ntoday, taxes included",
+   "subtitle": "PVPC hour by hour · VAT and electricity tax included · Red Eléctrica data",
+   "badge": "2026",
+   "brand": "Precio Luz Real"
+  }
+ ]
+}

@@ -1,0 +1,442 @@
+{
+  "_lisezmoi": "Todos los parámetros regulados del sitio viven aquí, nunca en el código ni en el texto (RECETTE §4). Cada valor se ha leído en la fuente oficial citada el día de retrieved_at. Los precios diarios no están aquí: los descarga scripts/data/fetch-pvpc.mjs (Red Eléctrica) en src/data/pvpc-historico.json.",
+  "year": 2026,
+  "retrieved_at": "2026-10-15",
+  "valid_from": "2026-01-01",
+  "valid_to": "2026-12-31",
+  "peajes": {
+    "_fuente": "cnmcPeajes2026",
+    "potencia_eur_kw_ano": {
+      "P1": 23.324952,
+      "P2": 0.44377
+    },
+    "energia_eur_kwh": {
+      "P1": 0.033261,
+      "P2": 0.016409,
+      "P3": 7.7e-05
+    }
+  },
+  "cargos": {
+    "_fuente": "tedCargos2026",
+    "potencia_eur_kw_ano": {
+      "P1": 4.379461,
+      "P2": 0.281653
+    },
+    "energia_eur_kwh": {
+      "P1": 0.064292,
+      "P2": 0.012858,
+      "P3": 0.003215
+    },
+    "destino": {
+      "recore": 0.4274,
+      "deficit": 0.3921,
+      "tnp": 0.1751,
+      "otros": 0.0054,
+      "_nota": "Orden TED/1524/2025, apartado séptimo: destino del coste de los cargos para la información de la factura."
+    }
+  },
+  "comercializacion": {
+    "_fuente": "etuComercializacion",
+    "margen_fijo_eur_kw_ano": 3.113,
+    "_nota": "Término fijo de los costes de comercialización (CCF) del PVPC fijado por la Orden ETU/1948/2016, anexo II, para 2016-2018; ninguna orden posterior lo ha cambiado. Se aplica a la potencia de punta-llano (P1)."
+  },
+  "bono_social_financiacion": {
+    "_fuente": "tedCargos2026",
+    "eur_cups_ano": 6.979247,
+    "_nota": "Valor unitario que pagan las comercializadoras por punto de suministro (Orden TED/1524/2025, apartado décimo d); la comercializadora de referencia lo repercute en la factura PVPC prorrateado por días."
+  },
+  "contador": {
+    "_fuente": "itcContador",
+    "alquiler_eur_mes": 0.81,
+    "_nota": "Contador electrónico con discriminación horaria y telegestión para consumidores domésticos (monofásico), Orden ITC/3860/2007, artículo 9."
+  },
+  "impuestos": {
+    "_fuente": "ley38Iee",
+    "iee_general": 0.0511269632,
+    "iee_minimo_eur_mwh": 1,
+    "iva_general": 0.21,
+    "igic_canarias_vivienda": 0,
+    "igic_umbral_kw": 10,
+    "periodos": [
+      {
+        "desde": "2025-01-01",
+        "hasta": "2026-03-21",
+        "iva": 0.21,
+        "iee": 0.0511269632,
+        "fuente": "ley38Iee"
+      },
+      {
+        "desde": "2026-03-22",
+        "hasta": "2026-05-31",
+        "iva": 0.1,
+        "iva_umbral_kw": 10,
+        "iva_umbral_incluido": false,
+        "iee": 0.005,
+        "fuente": "rdl7_2026"
+      },
+      {
+        "desde": "2026-06-01",
+        "hasta": "2026-10-31",
+        "iva": 0.21,
+        "iee": 0.0511269632,
+        "fuente": "rdl18_2026"
+      },
+      {
+        "desde": "2026-11-01",
+        "hasta": "2026-11-30",
+        "condicional": {
+          "mes_ipc": "2026-09",
+          "umbral_variacion": 15
+        },
+        "iva_rebajado": 0.1,
+        "iva_umbral_kw": 10,
+        "iva_umbral_incluido": true,
+        "iee_rebajado": 0.005,
+        "iva": 0.21,
+        "iee": 0.0511269632,
+        "fuente": "rdl25_2026"
+      },
+      {
+        "desde": "2026-12-01",
+        "hasta": "2026-12-31",
+        "condicional": {
+          "mes_ipc": "2026-10",
+          "umbral_variacion": 15
+        },
+        "iva_rebajado": 0.1,
+        "iva_umbral_kw": 10,
+        "iva_umbral_incluido": true,
+        "iee_rebajado": 0.005,
+        "iva": 0.21,
+        "iee": 0.0511269632,
+        "fuente": "rdl25_2026"
+      }
+    ],
+    "_nota": "Rebaja temporal del RDL 7/2026 (IVA 10 % para potencia inferior a 10 kW e impuesto eléctrico 0,5 %) del 22 de marzo al 31 de mayo de 2026: no se aplicó en junio (IPC de la electricidad de abril sin subida de más del 15 %). Agosto y septiembre (RDL 18/2026) dependían del IPC de junio (+6,0 %) y julio (+8,4 %): no se activaron. Noviembre y diciembre (RDL 25/2026) dependen del IPC de septiembre y octubre."
+  },
+  "periodos_2_0td": {
+    "_fuente": "cnmcCircular3_2020",
+    "punta": [
+      [
+        10,
+        14
+      ],
+      [
+        18,
+        22
+      ]
+    ],
+    "llano": [
+      [
+        8,
+        10
+      ],
+      [
+        14,
+        18
+      ],
+      [
+        22,
+        24
+      ]
+    ],
+    "valle": [
+      [
+        0,
+        8
+      ]
+    ],
+    "festivos_nacionales_fecha_fija": [
+      "01-01",
+      "01-06",
+      "05-01",
+      "08-15",
+      "10-12",
+      "11-01",
+      "12-06",
+      "12-08",
+      "12-25"
+    ],
+    "_nota": "Laborables de lunes a viernes. Sábados, domingos y festivos nacionales de fecha fija: las 24 horas en valle (P3) y potencia en P2."
+  },
+  "bono_social": {
+    "_fuente": "rd897",
+    "descuento_vulnerable": 0.425,
+    "descuento_severo": 0.575,
+    "descuento_hasta": "2026-12-31",
+    "_fuente_descuento": "rdl7_2026",
+    "descuento_ordinario_vulnerable": 0.35,
+    "descuento_ordinario_severo": 0.5,
+    "iprem_14_pagas": 8400,
+    "_fuente_iprem": "sepeIprem",
+    "multiplicador_base": 1.5,
+    "por_adulto_adicional": 0.3,
+    "por_menor": 0.5,
+    "por_circunstancia_especial": 1,
+    "severo_fraccion": 0.5,
+    "limites_kwh_ano": [
+      {
+        "id": "uno_dos",
+        "kwh": 1587
+      },
+      {
+        "id": "tres_pensionista",
+        "kwh": 2222
+      },
+      {
+        "id": "cuatro",
+        "kwh": 2698
+      },
+      {
+        "id": "cinco_numerosa",
+        "kwh": 4761
+      }
+    ]
+  },
+  "futuros_pvpc": {
+    "_fuente": "mitecoRd446",
+    "peso_2024": 0.25,
+    "peso_2025": 0.4,
+    "peso_2026": 0.55
+  },
+  "aparatos": {
+    "_fuente": "ueEtiquetaLavadora",
+    "lavadora": {
+      "capacidad_kg": 8,
+      "clase": "C",
+      "eei_max": {
+        "A": 52,
+        "B": 60,
+        "C": 69,
+        "D": 80,
+        "E": 91,
+        "F": 102
+      },
+      "duracion_min": 180,
+      "_fuente": "ueEtiquetaLavadora"
+    },
+    "lavavajillas": {
+      "servicios": 13,
+      "clase": "D",
+      "eei_max": {
+        "A": 32,
+        "B": 38,
+        "C": 44,
+        "D": 50,
+        "E": 56,
+        "F": 62
+      },
+      "duracion_min": 210,
+      "_fuente": "ueEtiquetaLavavajillas"
+    },
+    "horno": {
+      "volumen_l": 65,
+      "clase": "A",
+      "eei_max": {
+        "A+++": 45,
+        "A++": 62,
+        "A+": 82,
+        "A": 107,
+        "B": 132,
+        "C": 159
+      },
+      "duracion_min": 60,
+      "_fuente": "ueEtiquetaHorno"
+    },
+    "coche": {
+      "bateria_kwh": 60,
+      "desde_pct": 20,
+      "hasta_pct": 80,
+      "potencia_kw": 2.3,
+      "potencias_tipicas_kw": [
+        2.3,
+        3.7,
+        7.4
+      ]
+    }
+  },
+  "sources": {
+    "esiosPvpc": {
+      "url": "https://www.esios.ree.es/es/pvpc",
+      "label": {
+        "es": "Red Eléctrica, e·sios: término de facturación de energía activa del PVPC 2.0TD, hora a hora",
+        "en": "Red Eléctrica, e·sios: PVPC 2.0TD active energy price, hour by hour"
+      }
+    },
+    "reeMercado": {
+      "url": "https://www.ree.es/es/datos/mercados",
+      "label": {
+        "es": "Red Eléctrica, REData: precios del mercado eléctrico (cuartos de hora)",
+        "en": "Red Eléctrica, REData: electricity market prices (quarter hours)"
+      }
+    },
+    "cnmcPeajes2026": {
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26348",
+      "label": {
+        "es": "Resolución de 18 de diciembre de 2025 de la CNMC, peajes de transporte y distribución desde el 1 de enero de 2026 (BOE-A-2025-26348)",
+        "en": "CNMC Resolution of 18 December 2025, network tolls from 1 January 2026 (BOE-A-2025-26348)"
+      }
+    },
+    "tedCargos2026": {
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26705",
+      "label": {
+        "es": "Orden TED/1524/2025, de 23 de diciembre, cargos del sistema eléctrico y financiación del bono social para 2026 (BOE-A-2025-26705)",
+        "en": "Order TED/1524/2025 of 23 December, system charges and social-discount funding for 2026 (BOE-A-2025-26705)"
+      }
+    },
+    "etuComercializacion": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2016-12274",
+      "label": {
+        "es": "Orden ETU/1948/2016, costes de comercialización del PVPC, anexo II (BOE-A-2016-12274)",
+        "en": "Order ETU/1948/2016, PVPC retail costs, annex II (BOE-A-2016-12274)"
+      }
+    },
+    "rd216": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2014-3376",
+      "label": {
+        "es": "Real Decreto 216/2014, metodología de cálculo del PVPC, artículo 7 (texto consolidado)",
+        "en": "Royal Decree 216/2014, PVPC calculation method, article 7 (consolidated text)"
+      }
+    },
+    "cnmcCircular3_2020": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2020-1066",
+      "label": {
+        "es": "Circular 3/2020 de la CNMC, metodología de peajes y periodos horarios 2.0TD (BOE-A-2020-1066)",
+        "en": "CNMC Circular 3/2020, toll methodology and 2.0TD time periods (BOE-A-2020-1066)"
+      }
+    },
+    "itcContador": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2007-22458",
+      "label": {
+        "es": "Orden ITC/3860/2007, alquiler de los equipos de medida, artículo 9 (BOE-A-2007-22458)",
+        "en": "Order ITC/3860/2007, meter rental, article 9 (BOE-A-2007-22458)"
+      }
+    },
+    "ley38Iee": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-1992-28741",
+      "label": {
+        "es": "Ley 38/1992 de Impuestos Especiales, artículos 92 a 104: impuesto especial sobre la electricidad",
+        "en": "Act 38/1992 on Excise Duties, articles 92 to 104: electricity tax"
+      }
+    },
+    "ley37Iva": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-1992-28740",
+      "label": {
+        "es": "Ley 37/1992 del IVA, artículo 90: tipo general del 21 %",
+        "en": "Act 37/1992 on VAT, article 90: 21% standard rate"
+      }
+    },
+    "rdl7_2026": {
+      "url": "https://www.boe.es/eli/es/rdl/2026/03/20/7",
+      "label": {
+        "es": "Real Decreto-ley 7/2026, de 20 de marzo: bono social al 42,5 % y 57,5 %, IVA e impuesto eléctrico rebajados hasta junio",
+        "en": "Royal Decree-law 7/2026 of 20 March: social discount at 42.5% and 57.5%, lower VAT and electricity tax until June"
+      }
+    },
+    "rdl18_2026": {
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-14112",
+      "label": {
+        "es": "Real Decreto-ley 18/2026, de 29 de junio: salvaguarda de IVA e impuesto eléctrico para agosto y septiembre",
+        "en": "Royal Decree-law 18/2026 of 29 June: VAT and electricity-tax safeguard for August and September"
+      }
+    },
+    "rdl25_2026": {
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-20265",
+      "label": {
+        "es": "Real Decreto-ley 25/2026, de 29 de septiembre, artículos 18 a 21: IVA e impuesto eléctrico de noviembre y diciembre",
+        "en": "Royal Decree-law 25/2026 of 29 September, articles 18 to 21: VAT and electricity tax for November and December"
+      }
+    },
+    "ineIpc": {
+      "url": "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736176802&menu=ultiDatos&idp=1254735976607",
+      "label": {
+        "es": "INE, Índice de Precios de Consumo: subclase 04.5.1.0 Electricidad",
+        "en": "INE, Consumer Price Index: subclass 04.5.1.0 Electricity"
+      }
+    },
+    "igicCanarias": {
+      "url": "https://www.boe.es/buscar/doc.php?id=BOC-j-2025-90249",
+      "label": {
+        "es": "Decreto Legislativo 1/2025 de Canarias, texto refundido del IGIC, artículo 33.Uno.22.º: tipo cero para la vivienda hasta 10 kW",
+        "en": "Canary Islands Legislative Decree 1/2025, IGIC consolidated text, article 33.1.22: zero rate for homes up to 10 kW"
+      }
+    },
+    "rd897": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2017-11505",
+      "label": {
+        "es": "Real Decreto 897/2017, consumidor vulnerable y bono social, artículos 3 y 6 (texto consolidado)",
+        "en": "Royal Decree 897/2017, vulnerable consumers and social discount, articles 3 and 6 (consolidated text)"
+      }
+    },
+    "bonoSocialWeb": {
+      "url": "https://www.bonosocial.gob.es/",
+      "label": {
+        "es": "Ministerio para la Transición Ecológica: bonosocial.gob.es (solicitud y comprobación)",
+        "en": "Ministry for the Ecological Transition: bonosocial.gob.es (application and check)"
+      }
+    },
+    "sepeIprem": {
+      "url": "https://www.sepe.es/HomeSepe/prestaciones-desempleo/Cuantias-anuales.html",
+      "label": {
+        "es": "SEPE, cuantías anuales: IPREM 2026 en cómputo anual con pagas extra",
+        "en": "SEPE, annual amounts: 2026 IPREM including extra payments"
+      }
+    },
+    "mitecoRd446": {
+      "url": "https://www.miteco.gob.es/es/prensa/ultimas-noticias/2023/06/_el_gobierno_apruebalanuevametodologiadecalculodelatarifaregulad.html",
+      "label": {
+        "es": "MITECO: nueva metodología del PVPC (Real Decreto 446/2023), peso de los mercados a plazo",
+        "en": "MITECO: new PVPC method (Royal Decree 446/2023), weight of forward markets"
+      }
+    },
+    "mitecoPeajes": {
+      "url": "https://www.miteco.gob.es/es/energia/energia-electrica/electricidad/peajes.html",
+      "label": {
+        "es": "MITECO: peajes de acceso y cargos del sistema eléctrico",
+        "en": "MITECO: network tolls and system charges"
+      }
+    },
+    "ueEtiquetaLavadora": {
+      "url": "https://www.boe.es/buscar/doc.php?id=DOUE-L-2019-81874",
+      "label": {
+        "es": "Reglamento Delegado (UE) 2019/2014, etiquetado energético de las lavadoras, anexo IV",
+        "en": "Delegated Regulation (EU) 2019/2014, energy labelling of washing machines, annex IV"
+      }
+    },
+    "ueEtiquetaLavavajillas": {
+      "url": "https://www.boe.es/buscar/doc.php?id=DOUE-L-2019-81877",
+      "label": {
+        "es": "Reglamento Delegado (UE) 2019/2017, etiquetado energético de los lavavajillas, anexo IV",
+        "en": "Delegated Regulation (EU) 2019/2017, energy labelling of dishwashers, annex IV"
+      }
+    },
+    "ueEtiquetaHorno": {
+      "url": "https://www.boe.es/doue/2014/029/L00001-00032.pdf",
+      "label": {
+        "es": "Reglamento Delegado (UE) 65/2014, etiquetado energético de los hornos, anexo II",
+        "en": "Delegated Regulation (EU) 65/2014, energy labelling of ovens, annex II"
+      }
+    },
+    "cnmcFactura": {
+      "url": "https://facturaluz2.cnmc.es/",
+      "label": {
+        "es": "CNMC: simulador oficial de la factura de la luz",
+        "en": "CNMC: official electricity bill simulator"
+      }
+    },
+    "cnmcComparador": {
+      "url": "https://comparador.cnmc.gob.es/",
+      "label": {
+        "es": "CNMC: comparador de ofertas de energía",
+        "en": "CNMC: energy offers comparison tool"
+      }
+    },
+    "ley24": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2013-13645",
+      "label": {
+        "es": "Ley 24/2013 del Sector Eléctrico, artículo 17: precios voluntarios para el pequeño consumidor",
+        "en": "Act 24/2013 on the Electricity Sector, article 17: regulated PVPC prices"
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'en';
+---
+<PageLayout title={`Privacy policy – ${SITE_NAMES[lang]}`} description="Privacy on Precio Luz Real: calculations run in your browser, we do not store what you type and set no cookies. What technical data exists and your rights under the GDPR." lang={lang} noindex={true} breadcrumbs={[{ label: 'Privacy' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Privacy policy</h1>
+    <h2>Controller</h2>
+    <LegalIdentity lang={lang} />
+    <h2>What you type</h2>
+    <p>Consumption, power, household income or any other calculator value is processed only in your browser. It is not sent to us or to anyone else. If you use the share link, the values appear in the page address and whoever receives it can see them.</p>
+    <h2>No cookies</h2>
+    <p>The site sets no cookies and stores nothing in your browser’s local storage. See also the <a href={route('cookies', lang)}>cookies</a> page.</p>
+    <h2>Anonymous stability check</h2>
+    <p>When enabled, to check that the site works (errors, load times, clicks that do nothing), we use Microsoft Clarity in cookie-free mode: no cookie is set, each page view gets a one-off identifier, visits are not linked and page content is masked. Provider: Microsoft Ireland Operations Limited. Legal basis: legitimate interest in a working site (GDPR art. 6(1)(f)). You can object by blocking clarity.ms in your browser or by writing to us.</p>
+    <h2>Technical logs at the host</h2>
+    <p>Like any web server, the host may briefly record IP address and time to serve pages and prevent abuse. We have no access to those logs to identify anyone. Host details: see the <a href={route('terms', lang)}>legal notice</a>.</p>
+    <h2>Email</h2>
+    <p>If you write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>, your address is used only to reply and is deleted once the matter is closed, within twelve months at most.</p>
+    <h2>Your rights</h2>
+    <p>You have the right of access, rectification, erasure and objection: write to the address above. You may also complain to Spain’s data protection agency (AEPD, aepd.es) or to the {LEGAL.supervisoryAuthority}, the authority where the publisher is established. Updated <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-GB')}</time>.</p>
+  </div>
+</PageLayout>

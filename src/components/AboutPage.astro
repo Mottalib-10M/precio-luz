@@ -1,0 +1,47 @@
+---
+/** Quiénes somos (página de confianza, RECETTE §8.2): quién publica, por qué este sitio, cómo se financia. */
+import PageLayout from '../layouts/PageLayout.astro';
+import LegalIdentity from './LegalIdentity.astro';
+import { route, type Locale } from '../i18n/routes';
+import { P } from '../lib/engine/params';
+import { ESTADO } from '../lib/engine/datos';
+import { breadcrumbSchema, profilePageSchema } from '../lib/seo';
+import { CONTACT_EMAIL } from '../data/site-config';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const es = lang === 'es';
+const title = es ? 'Precio Luz Real 2026: quién publica el precio y cómo se hace' : 'Precio Luz Real 2026: who publishes it and how it is made';
+const description = es ? 'Quiénes somos: Radif Partners publica Precio Luz Real, el PVPC con impuestos desde el archivo oficial de Red Eléctrica, sin vender contratos ni pedir teléfonos.' : 'About Precio Luz Real: Radif Partners publishes the taxed PVPC price from Red Eléctrica’s official file, selling no contracts and asking for no phone numbers.';
+const h1 = es ? 'Quiénes somos' : 'About Precio Luz Real';
+const path = route('about', lang);
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={[profilePageSchema({ path, lang }), breadcrumbSchema([{ name: es ? 'Inicio' : 'Home', path: route('home', lang) }, { name: h1, path }])]} breadcrumbs={[{ label: h1 }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">{h1}</h1></header>
+  {es ? (
+  <div class="prose prose-slate max-w-none">
+    <p>Precio Luz Real lo publica Radif Partners, un editor independiente de calculadoras y guías prácticas. El sitio existe para responder una sola pregunta que las páginas más visitadas dejan a medias: ¿cuánto me cuesta de verdad un kilovatio hora hoy, con impuestos, y cuánto me cuesta poner la lavadora a esta hora? Quien busca el precio de la luz encuentra casi siempre el precio sin impuestos, a menudo junto a un teléfono para «estudiar su factura». Aquí no hay teléfono: hay el precio completo y las cuentas hechas.</p>
+    <h2>Lo que hacemos mejor que la primera página de Google</h2>
+    <p>Las páginas de los comparadores dan 24 precios sin IVA ni impuesto eléctrico y piden tus datos para llamarte. Las de los periódicos publican un artículo cada día, que a veces se queda con las cifras de otro día. Nosotros descargamos cada tarde el archivo oficial de Red Eléctrica, le aplicamos los impuestos vigentes cada día y reconstruimos el sitio entero: precio de hoy y de mañana, coste de cada aparato según la hora, factura completa con tu consumo, comparación con un precio fijo y bono social. Hoy el sitio guarda {ESTADO.diasHistorico} días de precios oficiales.</p>
+    <h2>Financiación e independencia</h2>
+    <p>El sitio no vende contratos, no cobra comisiones de ninguna comercializadora y no recoge datos de contacto. Puede mostrar publicidad, como máximo tres espacios por página, nunca encima de la calculadora y nunca de una empresa que pueda influir en las cifras. Ninguna comercializadora puede pagar para aparecer.</p>
+    <h2>Cómo trabajamos</h2>
+    <p>Cada valor regulado (peajes, cargos, margen, impuestos, bono social) está en un fichero de parámetros con la norma del BOE de la que sale y la fecha en que se leyó: la última revisión es del {P.retrieved_at}. Los textos no llevan ninguna cifra escrita a mano: se calculan con el mismo motor que las calculadoras. Las pruebas automáticas comprueban antes de cada publicación que los peajes y cargos de cada hora del archivo de Red Eléctrica coinciden con los del BOE. El detalle está en <a href={route('method', lang)}>método y fuentes</a> y en la <a href={route('editorial', lang)}>política editorial</a>.</p>
+    <h2>Quién responde</h2>
+    <LegalIdentity lang={lang} />
+    <p>Para señalar un error: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Lo corregimos en cuanto se confirma y la corrección se ve en todas las páginas a la vez.</p>
+  </div>
+  ) : (
+  <div class="prose prose-slate max-w-none">
+    <p>Precio Luz Real is published by Radif Partners, an independent publisher of calculators and practical guides. The site exists to answer one question that the most visited Spanish pages leave half done: what does a kilowatt hour really cost me today, taxes included, and what does it cost to run the washing machine now? Anyone searching for Spain’s electricity price nearly always finds the pre-tax figure, often next to a phone number offering to “review your bill”. There is no phone number here: just the full price and the sums already done, in Spanish and in English for people who live or work in Spain.</p>
+    <h2>What we do better than the top Google results</h2>
+    <p>Comparison sites show 24 prices without VAT or electricity tax and ask for your details so they can call you. Newspapers publish a new article every day, which sometimes keeps another day’s figures. We download Red Eléctrica’s official file every evening, apply each day’s taxes and rebuild the whole site: today’s and tomorrow’s price, what each appliance costs by the hour, a full bill with your own use, a fixed-price comparison and the social discount. The site currently holds {ESTADO.diasHistorico} days of official prices.</p>
+    <h2>Funding and independence</h2>
+    <p>The site sells no contracts, takes no commission from any retailer and collects no contact details. It may show advertising, at most three slots per page, never above the calculator and never from a company that could influence the figures. No retailer can pay to be mentioned.</p>
+    <h2>How we work</h2>
+    <p>Every regulated value (tolls, charges, margin, taxes, social discount) sits in a parameter file with the BOE rule it comes from and the date it was read; the last review was on {P.retrieved_at}. The texts carry no hand-typed figures: they are worked out by the same engine as the calculators. Automated tests check before every release that the tolls and charges in each hour of Red Eléctrica’s file match the BOE. Details in <a href={route('method', lang)}>method and sources</a> and the <a href={route('editorial', lang)}>editorial policy</a>.</p>
+    <h2>Who is responsible</h2>
+    <LegalIdentity lang={lang} />
+    <p>To report an error: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We fix it as soon as it is confirmed, and the correction shows on every page at once.</p>
+  </div>
+  )}
+</PageLayout>

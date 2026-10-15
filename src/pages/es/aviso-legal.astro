@@ -1,0 +1,29 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'es';
+---
+<PageLayout title={`Aviso legal – ${SITE_NAMES[lang]}`} description="Aviso legal de Precio Luz Real: editor, alojamiento, responsabilidad, propiedad intelectual, origen de los datos de Red Eléctrica y ley aplicable, según el artículo 10 de la LSSI." lang={lang} noindex={true} breadcrumbs={[{ label: 'Aviso legal' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Aviso legal</h1>
+    <p>En cumplimiento del artículo 10 de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico (LSSI), se informa de los datos del titular de este sitio.</p>
+    <h2>Editor</h2>
+    <LegalIdentity lang={lang} />
+    <p>Responsable de los contenidos de {SITE_URL}: {AUTHOR_NAME}. Contacto: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>Alojamiento</h2>
+    <LegalIdentity mode="hosting" lang={lang} />
+    <h2>Qué hace el sitio</h2>
+    <p>Precio Luz Real muestra el precio PVPC de la electricidad publicado por Red Eléctrica, le suma los impuestos vigentes y calcula facturas y costes de aparatos. Los resultados son <strong>estimaciones informativas</strong>: no sustituyen a la factura de tu comercializadora ni a un asesoramiento profesional. El sitio es independiente y no tiene relación con Red Eléctrica, la CNMC, el Ministerio para la Transición Ecológica ni ninguna comercializadora. Método y límites: <a href={route('method', lang)}>método y fuentes</a>.</p>
+    <h2>Origen de los datos</h2>
+    <p>Los precios horarios proceden de Red Eléctrica (e·sios y REData) y se citan con su fecha, sin alterarlos y sin usar sus marcas. Los valores regulados proceden del Boletín Oficial del Estado; el IPC, del Instituto Nacional de Estadística.</p>
+    <h2>Responsabilidad</h2>
+    <p>Los parámetros se contrastan con sus fuentes y el motor de cálculo se prueba de forma automática, pero no podemos garantizar la ausencia de errores ni la disponibilidad continua de los datos de terceros. El editor no responde de decisiones tomadas solo a partir de una estimación. Los errores se pueden comunicar en la <a href={route('contact', lang)}>página de contacto</a>.</p>
+    <h2>Propiedad intelectual</h2>
+    <p>Los textos, gráficos y código del sitio pertenecen al editor. La calculadora puede insertarse gratis con un enlace visible: ver <a href={route('widget', lang)}>insertar la calculadora</a>.</p>
+    <h2>Datos personales y cookies</h2><p>Lo que escribes en las calculadoras se queda en tu navegador. Ver la <a href={route('privacy', lang)}>política de privacidad</a> y la página de <a href={route('cookies', lang)}>cookies</a>.</p>
+    <h2>Ley aplicable</h2><p>Ley francesa, donde está establecido el editor, sin perjuicio de la protección que la ley española otorga a los consumidores residentes en España. Actualizado el <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'es-ES')}</time>.</p>
+  </div>
+</PageLayout>

@@ -1,0 +1,19 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'en';
+---
+<PageLayout title={`Contact – ${SITE_NAMES[lang]}`} description="Contact Precio Luz Real: report a price, a tax rate or a calculation that does not add up. We reply by email and every correction is dated on the site. No phone calls, ever." lang={lang} noindex={true} breadcrumbs={[{ label: 'Contact' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Contact</h1>
+    <p>Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We read everything about the calculations. There is no phone line and we will not call you.</p>
+    <h2>Report an error</h2>
+    <p>Does a price not match Red Eléctrica’s, has a tax changed, or does your bill not match the calculator? Give the page, the date and hour, and if possible a link to the official source. Corrections go into the parameter file with a date and show on every page at once.</p>
+    <h2>What we cannot do</h2>
+    <p>We cannot see your consumption, contract or bill, and we do not arrange contracts. Billing questions go to your retailer; complaints to the company’s customer service and, if it does not answer, to your region’s consumer affairs office.</p>
+    <h2>Embedding</h2><p>The code is on the <a href={route('widget', lang)}>embedding page</a>. Publisher and host: <a href={route('terms', lang)}>legal notice</a>.</p>
+  </div>
+</PageLayout>

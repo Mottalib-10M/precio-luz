@@ -1,0 +1,74 @@
+---
+/** Método y fuentes (página de confianza, RECETTE §8.2): fórmulas, datos, pruebas, límites. */
+import PageLayout from '../layouts/PageLayout.astro';
+import { route, type Locale } from '../i18n/routes';
+import { P } from '../lib/engine/params';
+import { ESTADO, HISTORICO } from '../lib/engine/datos';
+import { impuestosDelDia, conImpuestos, REGULADO_ENERGIA, POT_P1_PVPC, POT_P2_PVPC } from '../lib/engine/index';
+import { formatNumber, displayDate } from '../lib/format';
+import { breadcrumbSchema, webPageSchema, faqSchema } from '../lib/seo';
+import { CONTACT_EMAIL } from '../data/site-config';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const es = lang === 'es';
+const n = (x: number, d = 4) => formatNumber(x, d, lang);
+const tag = es ? 'es-ES' : 'en-GB';
+const title = es ? 'Método Precio Luz Real 2026: así se calcula el precio' : 'Precio Luz Real method 2026: how the taxed price is built';
+const description = es ? 'Método y fuentes: de dónde salen los precios PVPC, cómo se suman impuesto eléctrico e IVA, cómo se estima un día sin datos y qué pruebas pasa el motor.' : 'Method and sources: where PVPC prices come from, how electricity tax and VAT are added, how a missing day is estimated and which tests run before each release.';
+const h1 = es ? 'Método y fuentes' : 'Method and sources';
+const path = route('method', lang);
+const hoy = ESTADO.hoy;
+const d = HISTORICO[hoy];
+const imp = impuestosDelDia(hoy);
+const ej = d ? d.p[Math.floor(d.p.length / 2)] : 100;
+const ejTtc = conImpuestos(ej, imp);
+const fechas = Object.keys(HISTORICO).sort();
+const sources = Object.values(P.sources);
+const faqs = es ? [
+  { q: '¿Por qué vuestro precio con impuestos es distinto del de otra web?', a: 'Casi siempre porque la otra web da el precio sin impuestos, o solo con IVA, o con los tipos de otra fecha. Nosotros partimos del término de energía del PVPC que publica Red Eléctrica y le aplicamos el impuesto eléctrico y el IVA vigentes ese día; la opción «Excluidos» muestra la cifra original para comparar.' },
+  { q: '¿Qué pasa si Red Eléctrica no publica un día?', a: 'La página no inventa un precio. Si el archivo de un día no está disponible, la calculadora muestra un precio medio estimado: la media, hora a hora, de los días anteriores del mismo tipo (laborables o fines de semana y festivos) de las cuatro últimas semanas, con un aviso visible. En cuanto llega el dato oficial, lo sustituye.' },
+  { q: '¿Guardáis lo que escribo en las calculadoras?', a: 'No. Todos los cálculos se hacen en tu navegador con los datos que ya trae la página. No se envía nada a ningún servidor. Si usas el enlace para compartir, los valores van en la dirección de la página y los ve quien la reciba.' },
+] : [
+  { q: 'Why is your tax-inclusive price different from another site’s?', a: 'Nearly always because the other site shows the pre-tax price, or adds VAT only, or uses another date’s rates. We start from the PVPC energy term Red Eléctrica publishes and apply the electricity tax and VAT in force that day; the “Excluded” option shows the original figure so you can compare.' },
+  { q: 'What happens if Red Eléctrica does not publish a day?', a: 'The page does not make up a price. If a day’s file is unavailable, the calculator shows an estimated average: the hour-by-hour average of previous days of the same type (weekdays, or weekends and holidays) over the last four weeks, with a visible notice. As soon as the official figure arrives, it replaces the estimate.' },
+  { q: 'Do you store what I type into the calculators?', a: 'No. Every calculation runs in your browser with the data the page already carries. Nothing is sent to any server. If you use the share link, the values travel in the page address and whoever receives it can see them.' },
+];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={[webPageSchema({ name: h1, description, path, lang }), breadcrumbSchema([{ name: es ? 'Inicio' : 'Home', path: route('home', lang) }, { name: h1, path }]), faqSchema(faqs, lang)]} faqs={faqs} breadcrumbs={[{ label: h1 }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">{h1}</h1></header>
+  {es ? (
+  <div class="prose prose-slate max-w-none">
+    <p>Precio Luz Real convierte el precio oficial del PVPC en lo que paga un hogar. Los precios horarios vienen del archivo público n.º 70 de e·sios, de Red Eléctrica, que un programa descarga varias veces cada tarde a partir de las 20:40 (hora de Madrid), de nuevo después de medianoche y a primera hora de la tarde, y que reconstruye el sitio cada vez. El sitio guarda los {ESTADO.diasHistorico} últimos días, del <time datetime={fechas[0]}>{displayDate(fechas[0], tag)}</time> al <time datetime={fechas[fechas.length - 1]}>{displayDate(fechas[fechas.length - 1], tag)}</time>. Los valores regulados están en un fichero de parámetros revisado el <time datetime={P.retrieved_at}>{displayDate(P.retrieved_at, tag)}</time>, con la norma del BOE de cada uno.</p>
+    <h2>La fórmula del precio con impuestos</h2>
+    <p>Para cada hora: precio con impuestos = término de energía PVPC × (1 + impuesto eléctrico) × (1 + IVA). El impuesto eléctrico tiene una cuota mínima de 1 € por MWh, que solo actúa con el tipo rebajado del 0,5 %. En Canarias se usa el IGIC, al 0 % para viviendas de hasta 10 kW. Ejemplo con la hora central de hoy: {n(ej / 1000)} €/kWh × (1 + {n(imp.iee, 8)}) × (1 + {n(imp.iva, 2)}) = {n(ejTtc)} €/kWh.</p>
+    <h2>La factura</h2>
+    <p>Potencia: kW de punta-llano × {n(POT_P1_PVPC, 6)} € + kW de valle × {n(POT_P2_PVPC, 6)} € por kW y año, prorrateado por días. Energía: el consumo se reparte hora a hora con el perfil de consumo tipo 2.0TD que publica Red Eléctrica en el mismo archivo (columna COF2TD), y cada hora se paga a su precio. Se suman la financiación del bono social ({n(P.bono_social_financiacion.eur_cups_ano, 6)} € al año), el impuesto eléctrico sobre todo ello, el alquiler del contador ({n(P.contador.alquiler_eur_mes, 2)} € al mes) y el IVA sobre el total. El bono social descuenta el porcentaje vigente de la potencia y de la energía hasta el límite de kWh del Real Decreto 897/2017.</p>
+    <h2>Aparatos</h2>
+    <p>El consumo por defecto de la lavadora, el lavavajillas y el horno sale de las fórmulas de la etiqueta energética de la Unión Europea (Reglamentos Delegados 2019/2014, 2019/2017 y 65/2014): consumo normalizado según capacidad × índice máximo de la clase elegida. El de la recarga del coche es batería × porcentaje a cargar, y su duración, energía ÷ potencia del punto de carga. La energía se reparte por igual durante el programa y se paga a cada hora; si el programa pasa de medianoche, se usa el precio del día siguiente.</p>
+    <h2>Pruebas</h2>
+    <p>Antes de cada publicación se pasan pruebas automáticas con casos recalculados a mano: precio con impuestos, mínimo del impuesto eléctrico, periodos, factura con y sin bono social, fórmulas de la etiqueta y umbrales de renta. Además, en todas las horas de {P.year} se comprueba que la parte de peajes y cargos que trae el archivo de Red Eléctrica (columna TEUPCB) es exactamente la del periodo de esa hora en el BOE: punta {n(REGULADO_ENERGIA.P1, 6)}, llano {n(REGULADO_ENERGIA.P2, 6)} y valle {n(REGULADO_ENERGIA.P3, 6)} €/kWh. Si la CNMC o el Ministerio cambiaran un valor sin que lo actualizáramos, la prueba fallaría y no se publicaría nada.</p>
+    <h2>Lo que el sitio no calcula</h2>
+    <p>Ceuta y Melilla, que tienen otro precio y el IPSI. Las tarifas del mercado libre con más de un precio por periodo (el comparador admite un precio fijo único). El autoconsumo y la compensación de excedentes. Las pérdidas de carga del coche. Las potencias por encima de 10 kW, que no pueden acogerse al PVPC. Todo resultado es una estimación: lo que cuenta es tu factura.</p>
+    <h2>Fuentes</h2>
+    <ul>{sources.map((s) => <li><a href={s.url} rel="nofollow noopener" target="_blank">{s.label.es}</a></li>)}</ul>
+    <p>Los datos de Red Eléctrica se reutilizan citando la fuente y la fecha, sin alterarlos y sin usar sus marcas. ¿Ves un error? Escribe a <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </div>
+  ) : (
+  <div class="prose prose-slate max-w-none">
+    <p>Precio Luz Real turns the official PVPC price into what a household pays. Hourly prices come from public file no. 70 on e·sios, Red Eléctrica’s information system, which a script downloads several times each evening from 8:40 pm (Madrid time), again after midnight and in the early afternoon, rebuilding the site each time. The site keeps the last {ESTADO.diasHistorico} days, from <time datetime={fechas[0]}>{displayDate(fechas[0], tag)}</time> to <time datetime={fechas[fechas.length - 1]}>{displayDate(fechas[fechas.length - 1], tag)}</time>. Regulated values sit in a parameter file reviewed on <time datetime={P.retrieved_at}>{displayDate(P.retrieved_at, tag)}</time>, each with its BOE rule.</p>
+    <h2>The tax-inclusive price formula</h2>
+    <p>For each hour: price with taxes = PVPC energy term × (1 + electricity tax) × (1 + VAT). The electricity tax has a minimum of 1 € per MWh, which only bites at the reduced 0.5% rate. In the Canary Islands IGIC is used instead, at 0% for homes up to 10 kW. Example with today’s middle hour: {n(ej / 1000)} €/kWh × (1 + {n(imp.iee, 8)}) × (1 + {n(imp.iva, 2)}) = {n(ejTtc)} €/kWh.</p>
+    <h2>The bill</h2>
+    <p>Power: peak-standard kW × {n(POT_P1_PVPC, 6)} € + off-peak kW × {n(POT_P2_PVPC, 6)} € per kW per year, pro rata by days. Energy: consumption is spread hour by hour with the standard 2.0TD profile Red Eléctrica publishes in the same file (COF2TD column), and each hour is charged at its own price. Then come social-discount funding ({n(P.bono_social_financiacion.eur_cups_ano, 6)} € a year), electricity tax on all of that, meter rental ({n(P.contador.alquiler_eur_mes, 2)} € a month) and VAT on the total. The social discount takes the current percentage off power and energy up to the kWh cap in Royal Decree 897/2017.</p>
+    <h2>Appliances</h2>
+    <p>Default consumption for the washing machine, dishwasher and oven comes from the EU energy label formulas (Delegated Regulations 2019/2014, 2019/2017 and 65/2014): standard consumption for the capacity × the maximum index of the chosen class. For car charging it is battery × share to charge, and duration is energy ÷ charge-point power. Energy is spread evenly over the programme and charged at each hour; if the programme runs past midnight, the next day’s price is used.</p>
+    <h2>Tests</h2>
+    <p>Before each release automated tests run with hand-checked cases: price with taxes, the electricity tax minimum, periods, bills with and without the social discount, label formulas and income thresholds. On top of that, for every hour of {P.year} the tests check that the tolls-and-charges share in Red Eléctrica’s file (TEUPCB column) is exactly the BOE figure for that hour’s period: peak {n(REGULADO_ENERGIA.P1, 6)}, standard {n(REGULADO_ENERGIA.P2, 6)} and off-peak {n(REGULADO_ENERGIA.P3, 6)} €/kWh. If the CNMC or the Ministry changed a value and we had not updated it, the test would fail and nothing would be published.</p>
+    <h2>What the site does not calculate</h2>
+    <p>Ceuta and Melilla, which have a separate price and IPSI tax. Market tariffs with more than one price per period (the comparison takes a single fixed price). Self-consumption and surplus compensation. Car charging losses. Powers above 10 kW, which cannot be on the PVPC. Every result is an estimate: your bill is what counts.</p>
+    <h2>Sources</h2>
+    <ul>{sources.map((s) => <li><a href={s.url} rel="nofollow noopener" target="_blank">{s.label.en}</a></li>)}</ul>
+    <p>Red Eléctrica data is reused citing the source and date, unaltered and without its trademarks. Spotted an error? Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </div>
+  )}
+</PageLayout>

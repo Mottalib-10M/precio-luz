@@ -1,0 +1,17 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'es';
+---
+<PageLayout title={`Cookies – ${SITE_NAMES[lang]}`} description="Precio Luz Real no pone cookies ni guarda nada en tu dispositivo: el precio de la luz, la factura y el coste de los aparatos se calculan en el navegador sin rastreadores." lang={lang} noindex={true} breadcrumbs={[{ label: 'Cookies' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Cookies</h1>
+    <p>Este sitio no pone cookies y no usa el almacenamiento local del navegador. Las calculadoras no necesitan guardar nada: todo se recalcula cuando cambias un valor.</p>
+    <h2>Sin rastreo</h2><p>No hay botones de redes sociales ni rastreadores publicitarios. Por eso no hay banner de cookies. Si se activa la medición de estabilidad, Microsoft Clarity funciona sin cookies y con el contenido enmascarado: no guarda nada en tu dispositivo.</p>
+    <h2>Calculadora insertada</h2><p>La calculadora que otras webs insertan tampoco pone cookies. Más en la <a href={route('privacy', lang)}>política de privacidad</a>.</p>
+    <p>Preguntas: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Actualizado el <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'es-ES')}</time>.</p>
+  </div>
+</PageLayout>

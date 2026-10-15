@@ -1,0 +1,76 @@
+---
+/**
+ * Portada de un idioma (página pilar, RECETTE §5). Trama propia del tema: respuesta con la cifra del día,
+ * precio hora a hora con impuestos, tarjetas hoy / mañana / mes, coste de un aparato ahora (simulador
+ * secundario), texto, y un índice por familias de páginas. Textos: content/accueil.ts.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import PrecioCalc from './calc/PrecioCalc';
+import AparatoCalc from './calc/AparatoCalc';
+import Clamp from './Clamp.astro';
+import { HOME } from '../content/accueil';
+import { route, type Locale } from '../i18n/routes';
+import { navCategories } from '../i18n/nav';
+import { helpers } from '../lib/helpers';
+import { P } from '../lib/engine/params';
+import type { SourceKey } from '../lib/engine/params';
+import { bundle } from '../lib/bundle';
+import { media30, resumenDia, MESES } from '../lib/referencias';
+import { faqSchema, organizationSchema, websiteSchema, webPageSchema, webApplicationSchema } from '../lib/seo';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const x = HOME[lang];
+const H = helpers(lang);
+const path = route('home', lang);
+const resume = x.resume(H);
+const faqs = x.faqs(H);
+const keys: SourceKey[] = ['esiosPvpc', 'cnmcPeajes2026', 'tedCargos2026', 'etuComercializacion', 'ley38Iee', 'ley37Iva', 'rdl25_2026', 'rd216', 'cnmcCircular3_2020', 'igicCanarias', 'reeMercado'];
+const sources = keys.map((k) => ({ name: P.sources[k].label[lang], url: P.sources[k].url }));
+const jsonLd = [websiteSchema(lang), organizationSchema(lang), webPageSchema({ name: x.h1, description: x.description, path, lang }), webApplicationSchema({ name: x.h1, description: x.description, path, lang }), faqSchema(faqs, lang)];
+const es = lang === 'es';
+const groups = navCategories(lang);
+const datos = bundle();
+const hoy = resumenDia(0), man = resumenDia(1);
+const mes = MESES[MESES.length - 1];
+const k = (n: number) => H.kwh(n);
+const tarjetas = [
+  { t: es ? `Hoy, ${H.dia(hoy.fecha)}` : `Today, ${H.dia(hoy.fecha)}`, v: k(hoy.media), d: es ? `Más barata: ${H.tramo(hoy.min.h)}, ${k(hoy.min.ttc)}` : `Cheapest: ${H.tramo(hoy.min.h)}, ${k(hoy.min.ttc)}`, href: route('baratas', lang) },
+  { t: es ? `Mañana, ${H.dia(man.fecha)}` : `Tomorrow, ${H.dia(man.fecha)}`, v: man.estimado ? (es ? 'pendiente' : 'pending') : k(man.media), d: man.estimado ? (es ? 'Red Eléctrica lo publica hacia las 20:15' : 'Red Eléctrica publishes it around 8:15 pm') : (es ? `Más barata: ${H.tramo(man.min.h)}, ${k(man.min.ttc)}` : `Cheapest: ${H.tramo(man.min.h)}, ${k(man.min.ttc)}`), href: route('manana', lang) },
+  { t: es ? 'Media del mes en curso' : 'Month-to-date average', v: k(mes.ttc), d: es ? `${mes.dias} días publicados` : `${mes.dias} days published`, href: route('historial', lang) },
+];
+---
+<PageLayout title={x.title} description={x.description} lang={lang} jsonLd={jsonLd} faqs={faqs} sources={sources}>
+  <header class="mb-3">
+    <h1 class="text-3xl font-bold text-navy-900 md:text-4xl">{x.h1}</h1>
+    <p class="mt-2 text-lg text-navy-700">{x.intro}</p>
+  </header>
+  <Clamp text={resume} lang={lang} id="clamp-home" sentences={1} class="mb-4" />
+  <div data-outil>
+    <PrecioCalc client:load lang={lang} mode="hoy" datos={datos} methodHref={route('method', lang)} />
+  </div>
+  <section class="mt-2 grid gap-3 sm:grid-cols-3" data-chrome aria-label={es ? 'Resumen' : 'Summary'}>
+    {tarjetas.map((c) => (
+      <a href={c.href} class="block border-l-4 border-accent-500 bg-navy-50 px-4 py-3 hover:bg-accent-50">
+        <span class="block text-xs font-semibold uppercase tracking-wide text-navy-600">{c.t}</span>
+        <span class="tabular-nums block text-2xl font-bold text-navy-900">{c.v}</span>
+        <span class="block text-sm text-navy-700">{c.d}</span>
+      </a>
+    ))}
+  </section>
+  <section class="mt-10" data-simulateur-secondaire>
+    <h2 class="mb-3 text-2xl font-bold text-navy-900">{es ? '¿Cuánto cuesta encender un aparato ahora?' : 'What does running an appliance cost right now?'}</h2>
+    <AparatoCalc client:load lang={lang} aparato="generico" datos={datos} precioLibre={media30()} methodHref={route('method', lang)} secundario />
+  </section>
+  <div class="prose prose-slate mt-10 max-w-none">
+    <Fragment set:html={x.body(H)} />
+  </div>
+  <section class="mt-12" data-chrome>
+    <h2 class="mb-4 text-2xl font-bold text-navy-900">{es ? 'Todas las calculadoras y guías' : 'All calculators and guides'}</h2>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {groups.map((g) => (
+        <div><h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-navy-700">{g.label}</h3>
+          <ul class="space-y-1 text-navy-800">{g.links.map((l) => <li><a class="underline decoration-navy-300 underline-offset-2 hover:text-accent-700" href={l.href}>{l.label}</a></li>)}</ul></div>
+      ))}
+    </div>
+  </section>
+</PageLayout>

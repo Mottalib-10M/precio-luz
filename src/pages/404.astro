@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { route, DEFAULT_LOCALE } from '../i18n/routes';
+---
+<BaseLayout title="Página no encontrada · Page not found" description="Esta página no existe. This page does not exist." lang={DEFAULT_LOCALE} noindex={true}>
+  <div class="mx-auto max-w-3xl px-4 py-16 text-center">
+    <h1 class="text-3xl font-bold text-navy-900">404</h1>
+    <p class="mt-4 text-navy-700">Esta página no existe. This page does not exist.</p>
+    <p class="mt-6 flex flex-wrap justify-center gap-3">
+      <a href={route('home', 'es')} class="rounded-lg bg-accent-700 px-5 py-2.5 font-semibold text-white hover:bg-accent-800">Precio de la luz hoy</a>
+      <a href={route('home', 'en')} class="rounded-lg border border-navy-300 px-5 py-2.5 font-semibold text-navy-900 hover:bg-navy-50">Electricity price today</a>
+    </p>
+  </div>
+</BaseLayout>

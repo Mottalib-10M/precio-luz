@@ -1,0 +1,18 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+import { P } from '../../lib/engine/params';
+const lang = 'es';
+---
+<PageLayout title={`Política editorial – ${SITE_NAMES[lang]}`} description="Cómo comprueba Precio Luz Real los precios y los impuestos: solo fuentes oficiales, una fecha para cada valor, pruebas automáticas y correcciones visibles en todas las páginas." lang={lang} noindex={true} breadcrumbs={[{ label: 'Política editorial' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Política editorial</h1>
+    <h2>Fuentes</h2><p>Solo fuentes primarias: Red Eléctrica para los precios, el BOE para peajes (CNMC), cargos (Ministerio), impuestos y bono social, y el INE para el IPC que activa las rebajas fiscales. Un blog, un comparador o la página de una comercializadora nunca son fuente. Cada valor está en el fichero de parámetros con su norma y la fecha en que se leyó ({P.retrieved_at}).</p>
+    <h2>Lo que no publicamos</h2><p>Un valor que no hemos podido leer en una fuente oficial no se publica: por eso no calculamos Ceuta y Melilla. Un precio de un día que Red Eléctrica no ha publicado nunca se presenta como real: se muestra como precio medio estimado, con aviso. No clasificamos comercializadoras ni cobramos por mencionar a nadie.</p>
+    <h2>Comprobaciones</h2><p>El motor se prueba en cada publicación con casos calculados a mano y con todas las horas del año, cuyos peajes y cargos deben coincidir con el BOE. Los parámetros se revisan cada 1 de enero y cada vez que se publica una norma nueva sobre la tarifa o sus impuestos.</p>
+    <h2>Correcciones</h2><p>Los errores se corrigen en cuanto se confirman. Escribe a <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Más en <a href={route('method', lang)}>método y fuentes</a> y <a href={route('about', lang)}>quiénes somos</a>.</p>
+  </div>
+</PageLayout>

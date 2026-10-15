@@ -1,0 +1,19 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'es';
+---
+<PageLayout title={`Contacto – ${SITE_NAMES[lang]}`} description="Contacto de Precio Luz Real: señala un precio, un impuesto o un cálculo que no cuadra. Respondemos por correo y cada corrección queda fechada en el sitio. Sin teléfonos." lang={lang} noindex={true} breadcrumbs={[{ label: 'Contacto' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Contacto</h1>
+    <p>Escribe a <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Leemos todo lo que tenga que ver con los cálculos. No hay teléfono y no te llamaremos.</p>
+    <h2>Señalar un error</h2>
+    <p>¿Un precio no coincide con el de Red Eléctrica, un impuesto ha cambiado o tu factura no cuadra con el simulador? Indica la página, la fecha y la hora, y si puedes un enlace a la fuente oficial. Las correcciones se apuntan con fecha en el fichero de parámetros y aparecen en todas las páginas a la vez.</p>
+    <h2>Lo que no podemos hacer</h2>
+    <p>No vemos tu consumo, tu contrato ni tu factura, y no gestionamos contratos. Las dudas de facturación son para tu comercializadora; las reclamaciones, para el servicio de atención al cliente de la empresa y, si no responde, para los servicios de consumo de tu comunidad autónoma.</p>
+    <h2>Insertar la calculadora</h2><p>El código está en la <a href={route('widget', lang)}>página para insertar la calculadora</a>. Editor y alojamiento: <a href={route('terms', lang)}>aviso legal</a>.</p>
+  </div>
+</PageLayout>

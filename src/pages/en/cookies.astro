@@ -1,0 +1,17 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'en';
+---
+<PageLayout title={`Cookies on ${SITE_NAMES[lang]}: none set, how to check`} description="Precio Luz Real sets no cookies and stores nothing on your device: the electricity price, the bill and appliance costs are worked out in your browser without trackers." lang={lang} noindex={true} breadcrumbs={[{ label: 'Cookies' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Cookies</h1>
+    <p>This site sets no cookies and does not use your browser’s local storage. The calculators need nothing saved: everything is recalculated when you change a value.</p>
+    <h2>No tracking</h2><p>There are no social buttons and no advertising trackers, which is why there is no cookie banner. If stability measurement is switched on, Microsoft Clarity runs without cookies and with content masked: nothing is stored on your device.</p>
+    <h2>Embedded calculator</h2><p>The calculator other sites embed sets no cookies either. More in the <a href={route('privacy', lang)}>privacy policy</a>.</p>
+    <p>Questions: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Updated <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-GB')}</time>.</p>
+  </div>
+</PageLayout>

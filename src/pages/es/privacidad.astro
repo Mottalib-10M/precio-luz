@@ -1,0 +1,27 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'es';
+---
+<PageLayout title={`Política de privacidad – ${SITE_NAMES[lang]}`} description="Privacidad en Precio Luz Real: los cálculos se hacen en tu navegador, no guardamos lo que escribes ni ponemos cookies. Qué datos técnicos existen y tus derechos según el RGPD." lang={lang} noindex={true} breadcrumbs={[{ label: 'Privacidad' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Política de privacidad</h1>
+    <h2>Responsable</h2>
+    <LegalIdentity lang={lang} />
+    <h2>Lo que escribes</h2>
+    <p>Consumo, potencia, renta del hogar o cualquier otro valor de las calculadoras se procesa solo en tu navegador. No se envía a nosotros ni a nadie. Si usas el enlace para compartir, los valores aparecen en la dirección de la página y los ve quien la reciba.</p>
+    <h2>Sin cookies</h2>
+    <p>El sitio no pone cookies ni guarda nada en el almacenamiento local de tu navegador. Ver también la página de <a href={route('cookies', lang)}>cookies</a>.</p>
+    <h2>Medición anónima de estabilidad</h2>
+    <p>Si está activada, para comprobar que el sitio funciona (errores, tiempos de carga, clics que no hacen nada) usamos Microsoft Clarity en modo sin cookies: no se pone ninguna cookie, cada página vista recibe un identificador puntual, las visitas no se enlazan y el contenido de la página está enmascarado. Proveedor: Microsoft Ireland Operations Limited. Base jurídica: interés legítimo en un sitio que funcione (art. 6.1.f RGPD). Puedes oponerte bloqueando clarity.ms en tu navegador o escribiéndonos.</p>
+    <h2>Registros técnicos del alojamiento</h2>
+    <p>Como cualquier servidor, el alojamiento puede registrar brevemente la dirección IP y la hora para servir las páginas y evitar abusos. No tenemos acceso a esos registros para identificar a nadie. Datos del alojamiento: ver el <a href={route('terms', lang)}>aviso legal</a>.</p>
+    <h2>Correo</h2>
+    <p>Si escribes a <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>, tu dirección solo se usa para responder y se borra cuando se cierra el asunto, como máximo en doce meses.</p>
+    <h2>Tus derechos</h2>
+    <p>Tienes derecho de acceso, rectificación, supresión y oposición: escribe a la dirección anterior. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es) o ante la {LEGAL.supervisoryAuthority}, autoridad del país del editor. Actualizado el <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'es-ES')}</time>.</p>
+  </div>
+</PageLayout>

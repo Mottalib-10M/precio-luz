@@ -1,0 +1,29 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'en';
+---
+<PageLayout title={`Legal notice – ${SITE_NAMES[lang]}`} description="Legal notice for Precio Luz Real: publisher, host, liability, copyright, the origin of Red Eléctrica data and governing law, under article 10 of Spain’s LSSI e-commerce act." lang={lang} noindex={true} breadcrumbs={[{ label: 'Legal notice' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Legal notice</h1>
+    <p>As required by article 10 of Spain’s Act 34/2002 on information society services and e-commerce (LSSI), here are the details of this site’s owner.</p>
+    <h2>Publisher</h2>
+    <LegalIdentity lang={lang} />
+    <p>Responsible for the content of {SITE_URL}: {AUTHOR_NAME}. Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>Host</h2>
+    <LegalIdentity mode="hosting" lang={lang} />
+    <h2>What the site does</h2>
+    <p>Precio Luz Real shows the PVPC electricity price published by Red Eléctrica, adds the taxes in force and works out bills and appliance costs. Results are <strong>estimates for information</strong>: they do not replace your retailer’s bill or professional advice. The site is independent and has no link to Red Eléctrica, the CNMC, the Ministry for the Ecological Transition or any retailer. Method and limits: <a href={route('method', lang)}>method and sources</a>.</p>
+    <h2>Where the data comes from</h2>
+    <p>Hourly prices come from Red Eléctrica (e·sios and REData) and are quoted with their date, unaltered and without its trademarks. Regulated values come from Spain’s Official State Gazette (BOE); the price index from the National Statistics Institute (INE).</p>
+    <h2>Liability</h2>
+    <p>Parameters are checked against their sources and the engine is tested automatically, but we cannot guarantee freedom from errors or the continuous availability of third-party data. The publisher is not liable for decisions based solely on an estimate. Report errors through the <a href={route('contact', lang)}>contact page</a>.</p>
+    <h2>Copyright</h2>
+    <p>The site’s texts, graphics and code belong to the publisher. The calculator may be embedded free of charge with a visible link: see <a href={route('widget', lang)}>embed the calculator</a>.</p>
+    <h2>Personal data and cookies</h2><p>What you type into the calculators stays in your browser. See the <a href={route('privacy', lang)}>privacy policy</a> and the <a href={route('cookies', lang)}>cookies</a> page.</p>
+    <h2>Governing law</h2><p>French law, where the publisher is established, without prejudice to the protection Spanish law gives consumers resident in Spain. Updated <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-GB')}</time>.</p>
+  </div>
+</PageLayout>

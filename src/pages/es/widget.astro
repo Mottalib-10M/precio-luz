@@ -1,0 +1,22 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema } from '../../lib/seo';
+const lang = 'es';
+const code = `<iframe src="${SITE_URL}/embed/precio-luz/" title="Precio de la luz hoy con impuestos" width="100%" height="1500" style="border:0;max-width:1100px" loading="lazy"></iframe>`;
+---
+<PageLayout title="Insertar la calculadora del precio de la luz – Precio Luz Real" description="Copia el código y pega en tu web el precio PVPC de hoy y de mañana con impuestos. Comunidades de vecinos, blogs y medios locales lo usan gratis, con un enlace visible." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Inicio', path: route('home', lang) }, { name: 'Widget', path: route('widget', lang) }])]} breadcrumbs={[{ label: 'Widget' }]} showAuthor={false}>
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Insertar la calculadora del precio de la luz</h1>
+    <p class="mt-3 text-lg text-navy-700">Copia el código y pégalo en tu página. Se actualiza solo cada tarde con el precio de Red Eléctrica.</p>
+  </header>
+  <div class="prose prose-slate max-w-none">
+    <pre class="overflow-x-auto rounded-lg bg-navy-900 p-4 text-sm text-white"><code>{code}</code></pre>
+    <p>Condiciones: el enlace bajo la calculadora debe quedar visible, la calculadora no se modifica y se ofrece sin garantía. Versión en inglés: <code>{`${SITE_URL}/embed/electricity-price/`}</code>.</p>
+    <p><a href={route('contact', lang)}>Contacto</a></p>
+  </div>
+  <div class="mt-8 overflow-hidden rounded-xl border border-navy-200">
+    <iframe src="/embed/precio-luz/" title="Precio de la luz hoy con impuestos" width="100%" height="1500" style="border:0" loading="lazy"></iframe>
+  </div>
+</PageLayout>

@@ -1,0 +1,22 @@
+---
+/** Página para iframe: la calculadora sin navegación. noindex, fuera del sitemap (astro.config). */
+import '../../styles/global.css';
+import PrecioCalc from '../../components/calc/PrecioCalc';
+import { SITE_URL } from '../../data/site-config';
+import { bundle } from '../../lib/bundle';
+const datos = bundle({ dias: 30 });
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spain electricity price calculator – Precio Luz Real</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={`${SITE_URL}/en/`} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="bg-white p-2 text-navy-900">
+    <PrecioCalc client:load lang="en" datos={datos} />
+    <p class="mt-2 text-center text-xs text-navy-600"><a href={`${SITE_URL}/en/`} target="_blank" rel="noopener" class="underline">Precio Luz Real · PVPC price with taxes</a></p>
+  </body>
+</html>
