@@ -8,7 +8,12 @@
  */
 import { P, IPC, type DiaPVPC } from './params';
 
-export type Region = 'peninsula' | 'canarias';
+export type Region = 'peninsula' | 'canarias' | 'ceuta' | 'melilla';
+/** Ceuta y Melilla: otro calendario de periodos (Circular 3/2020) y otra columna de precio en e·sios. */
+export const esCeutaMelilla = (r: Region) => r === 'ceuta' || r === 'melilla';
+/** Región a partir del selector de las calculadoras (0 Península y Baleares, 1 Canarias, 2 Ceuta, 3 Melilla). */
+export const REGIONES: Region[] = ['peninsula', 'canarias', 'ceuta', 'melilla'];
+export const regionDe = (n: number): Region => REGIONES[Math.round(n)] ?? 'peninsula';
 export type Periodo = 'P1' | 'P2' | 'P3';
 
 export interface Impuestos {
@@ -16,10 +21,10 @@ export interface Impuestos {
   iee: number;
   /** Mínimo del impuesto eléctrico, € por kWh. */
   ieeMinKwh: number;
-  /** IVA o IGIC aplicado (fracción). */
+  /** IVA, IGIC o IPSI aplicado (fracción). */
   iva: number;
-  /** Nombre del impuesto indirecto: IVA en la Península y Baleares, IGIC en Canarias. */
-  indirecto: 'IVA' | 'IGIC';
+  /** Nombre del impuesto indirecto: IVA en la Península y Baleares, IGIC en Canarias, IPSI en Ceuta y Melilla. */
+  indirecto: 'IVA' | 'IGIC' | 'IPSI';
   /** Rebaja temporal aplicada ese día (RDL 7/2026 o RDL 25/2026). */
   rebaja: boolean;
   /** Mes cuya rebaja depende de un IPC aún no publicado por el INE: se aplican los tipos generales. */
@@ -30,15 +35,17 @@ export interface Impuestos {
 
 type PeriodoFiscal = (typeof P.impuestos.periodos)[number] & Partial<{ condicional: { mes_ipc: string; umbral_variacion: number }; iva_rebajado: number; iee_rebajado: number; iva_umbral_kw: number; iva_umbral_incluido: boolean }>;
 
-/** Tipos del día de consumo `fecha` (AAAA-MM-DD) para una potencia contratada `kw`. */
-export function impuestosDelDia(fecha: string, kw = 4.6, region: Region = 'peninsula', ipc = IPC): Impuestos {
+/** Tipos del día de consumo `fecha` (AAAA-MM-DD) para una potencia contratada `kw`. `severo`: perceptor del
+ *  bono social vulnerable severo, que tiene el IVA rebajado sea cual sea su potencia (RDL 7/2026 art. 42,
+ *  RDL 18/2026 y RDL 25/2026 art. 18.1.b y 19.1.b). */
+export function impuestosDelDia(fecha: string, kw = 4.6, region: Region = 'peninsula', ipc = IPC, severo = false): Impuestos {
   const I = P.impuestos;
   const per = (I.periodos as PeriodoFiscal[]).find((p) => fecha >= p.desde && fecha <= p.hasta);
   let iee = I.iee_general, iva = I.iva_general, rebaja = false, pendiente: string | undefined;
   const fuente = per?.fuente ?? 'ley38Iee';
   if (per) {
     const umbral = per.iva_umbral_kw;
-    const cumplePotencia = umbral === undefined ? true : per.iva_umbral_incluido ? kw <= umbral : kw < umbral;
+    const cumplePotencia = umbral === undefined || severo ? true : per.iva_umbral_incluido ? kw <= umbral : kw < umbral;
     if (per.condicional) {
       const dato = ipc.find((m) => m.mes === per.condicional!.mes_ipc);
       if (!dato) pendiente = per.condicional.mes_ipc;
@@ -53,6 +60,10 @@ export function impuestosDelDia(fecha: string, kw = 4.6, region: Region = 'penin
       rebaja = per.iee < I.iee_general;
     }
   }
+  // Ceuta y Melilla: sin IVA (Ley 37/1992, art. 3); IPSI del 1 % sobre el total facturado (ordenanzas de
+  // cada ciudad). El impuesto eléctrico y sus rebajas se aplican igual (Ley 38/1992, art. 91).
+  if (region === 'ceuta') return { iee, ieeMinKwh: I.iee_minimo_eur_mwh / 1000, iva: I.ipsi_ceuta, indirecto: 'IPSI', rebaja, pendiente, fuente };
+  if (region === 'melilla') return { iee, ieeMinKwh: I.iee_minimo_eur_mwh / 1000, iva: I.ipsi_melilla, indirecto: 'IPSI', rebaja, pendiente, fuente };
   if (region === 'canarias') return { iee, ieeMinKwh: I.iee_minimo_eur_mwh / 1000, iva: I.igic_canarias_vivienda, indirecto: 'IGIC', rebaja, pendiente, fuente };
   return { iee, ieeMinKwh: I.iee_minimo_eur_mwh / 1000, iva, indirecto: 'IVA', rebaja, pendiente, fuente };
 }
@@ -70,13 +81,24 @@ const esFinde = (fecha: string) => { const d = new Date(`${fecha}T12:00:00Z`).ge
 export function esDiaValle(fecha: string): boolean {
   return esFinde(fecha) || (P.periodos_2_0td.festivos_nacionales_fecha_fija as string[]).includes(fecha.slice(5));
 }
-/** Periodo 2.0TD de la hora que empieza a las `hora` del día `fecha`. */
-export function periodo(fecha: string, hora: number): Periodo {
+/** Periodo 2.0TD de la hora que empieza a las `hora` del día `fecha` (Circular 3/2020, art. 7.3:
+ *  en Ceuta y Melilla la punta y el llano empiezan una hora más tarde). */
+export function periodo(fecha: string, hora: number, region: Region = 'peninsula'): Periodo {
   if (esDiaValle(fecha)) return 'P3';
+  const cal = esCeutaMelilla(region) ? P.periodos_2_0td.ceuta_melilla : P.periodos_2_0td;
   const en = (tramos: number[][]) => tramos.some(([a, b]) => hora >= a && hora < b);
-  if (en(P.periodos_2_0td.punta)) return 'P1';
-  if (en(P.periodos_2_0td.llano)) return 'P2';
+  if (en(cal.punta)) return 'P1';
+  if (en(cal.llano)) return 'P2';
   return 'P3';
+}
+
+/** Serie de precios (€/MWh) y de peajes y cargos de la región: columnas CYM/TEUCYM en Ceuta y Melilla. */
+export function serieRegion(d: DiaPVPC, region: Region): { p: number[]; t: number[] } {
+  if (esCeutaMelilla(region)) {
+    if (!d.pcm || !d.tcm) throw new Error('Día sin precios de Ceuta y Melilla (columna CYM)');
+    return { p: d.pcm, t: d.tcm };
+  }
+  return { p: d.p, t: d.t };
 }
 
 export interface Hora {
@@ -99,7 +121,8 @@ export const horasDe = (d: DiaPVPC) => d.h ?? d.p.map((_, i) => i);
 export function diaConImpuestos(fecha: string, d: DiaPVPC, kw = 4.6, region: Region = 'peninsula'): Hora[] {
   const imp = impuestosDelDia(fecha, kw, region);
   const hs = horasDe(d);
-  return d.p.map((p, i) => ({ h: hs[i], i, sin: p / 1000, ttc: conImpuestos(p, imp), regulado: (d.t[i] ?? 0) / 1000, periodo: periodo(fecha, hs[i]) }));
+  const s = serieRegion(d, region);
+  return s.p.map((p, i) => ({ h: hs[i], i, sin: p / 1000, ttc: conImpuestos(p, imp), regulado: (s.t[i] ?? 0) / 1000, periodo: periodo(fecha, hs[i], region) }));
 }
 
 export interface Resumen { media: number; min: Hora; max: Hora; mediaSin: number }
@@ -135,8 +158,9 @@ export function perfilEstimado(fecha: string, hist: Record<string, DiaPVPC>, ven
   const cerca = prev.filter((f) => (Date.parse(fecha) - Date.parse(f)) / 864e5 <= ventana);
   const usados = cerca.length >= 4 ? cerca : prev.filter((f) => f.slice(5, 7) === fecha.slice(5, 7));
   if (!usados.length) throw new Error(`Sin historial para estimar ${fecha}`);
-  const avg = (k: 'p' | 't') => Array.from({ length: 24 }, (_, i) => usados.reduce((s, f) => s + hist[f][k][i], 0) / usados.length);
-  return { p: avg('p'), t: avg('t'), dias: usados };
+  const avg = (k: 'p' | 't' | 'pcm' | 'tcm') => Array.from({ length: 24 }, (_, i) => usados.reduce((s, f) => s + (hist[f][k] ?? hist[f].p)[i], 0) / usados.length);
+  const cym = usados.every((f) => hist[f].pcm && hist[f].tcm) ? { pcm: avg('pcm'), tcm: avg('tcm') } : {};
+  return { p: avg('p'), t: avg('t'), ...cym, dias: usados };
 }
 
 export interface DiaResuelto { fecha: string; dia: DiaPVPC; estimado: boolean; dias?: string[] }
@@ -144,7 +168,7 @@ export interface DiaResuelto { fecha: string; dia: DiaPVPC; estimado: boolean; d
 export function diaOEstimado(fecha: string, hist: Record<string, DiaPVPC>): DiaResuelto {
   if (hist[fecha]) return { fecha, dia: hist[fecha], estimado: false };
   const e = perfilEstimado(fecha, hist);
-  return { fecha, dia: { p: e.p, t: e.t }, estimado: true, dias: e.dias };
+  return { fecha, dia: { p: e.p, t: e.t, ...(e.pcm ? { pcm: e.pcm, tcm: e.tcm } : {}) }, estimado: true, dias: e.dias };
 }
 
 /** Coste de la energía de un aparato que consume `kwh` repartidos por igual en `duracionH` horas,

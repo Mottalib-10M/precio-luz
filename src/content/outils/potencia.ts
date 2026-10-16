@@ -16,7 +16,7 @@ export default defineGuide({
   order: 3,
   tool: 'potencia',
   related: ['factura', 'peajes', 'libre', 'coche'],
-  sources: ['cnmcPeajes2026', 'tedCargos2026', 'etuComercializacion', 'cnmcCircular3_2020'],
+  sources: ['cnmcPeajes2026', 'tedCargos2026', 'etuComercializacion', 'cnmcCircular3_2020', 'rd1164', 'rd1048'],
   es: {
     slug: 'potencia-contratada',
     nav: 'Potencia contratada',
@@ -34,7 +34,7 @@ export default defineGuide({
       return [
         { q: '¿Qué potencia necesito en casa?', a: `Suma la potencia de lo que usas a la vez en el peor momento del día: horno, placa de inducción, lavadora calentando agua, termo, aire acondicionado. Cada aparato la indica en vatios en su placa de características. Elige el primer escalón por encima de esa suma, con algo de margen para la nevera y la iluminación, que siempre están encendidas.` },
         { q: '¿Puedo tener distinta potencia en punta y en valle?', a: `Sí, la tarifa 2.0TD permite contratar dos potencias, una para punta-llano (P1) y otra para valle (P2). La de valle es mucho más barata, ${h.eur(h.M.POT_P2_PVPC * (1 + v.a.imp.iee) * (1 + v.a.imp.iva), 2)} por kW al año con impuestos, y conviene subirla si cargas el coche de noche.` },
-        { q: '¿Cuesta algo cambiar de potencia?', a: `La distribuidora puede cobrar derechos de acceso, de enganche o de extensión, sobre todo al subir. Bajar suele ser barato, pero no se puede volver a cambiar gratis cada mes. Pide el importe a tu comercializadora antes de decidir y compáralo con el ahorro anual de la calculadora.` },
+        { q: '¿Cuesta algo cambiar de potencia?', a: `Bajarla no cuesta nada por ley, salvo si hay que cambiar el equipo de medida. Subirla cuenta como un alta adicional y paga derechos de acceso y, si hay que reforzar la red, de extensión. La distribuidora puede negarse a otro cambio si ya lo hiciste en los últimos doce meses. Pide el importe a tu comercializadora antes de decidir y compáralo con el ahorro anual de la calculadora.` },
       ];
     },
     body: (h) => {
@@ -46,7 +46,7 @@ ${h.table(['Pieza', 'Punta-llano (P1)', 'Valle (P2)', 'Norma'], [
   ['Margen de comercialización', h.num(h.P.comercializacion.margen_fijo_eur_kw_ano, 3), '0', 'Orden ETU/1948/2016'],
   ['Total sin impuestos', h.num(h.M.POT_P1_PVPC, 6), h.num(h.M.POT_P2_PVPC, 6), ''],
 ], '€ por kW y año. Con impuesto eléctrico e IVA, multiplica por (1 + impuesto) × (1 + IVA).', ['l', 'r', 'r', 'l'])}
-<p>Los escalones de la lista no son arbitrarios: corresponden a la intensidad del interruptor de control de potencia multiplicada por 230 voltios. ${ESCALONES.slice(1, 5).map((e) => `${e.a} amperios dan ${h.num(e.kw, 2)} kW`).join(', ')}. Con un contador inteligente la distribuidora puede cambiar la potencia a distancia, sin visita.</p>
+<p>Los escalones de la lista no son arbitrarios: corresponden a la intensidad del interruptor de control de potencia multiplicada por 230 voltios, aunque con contador inteligente también se puede contratar cualquier múltiplo de 0,1 kW hasta 15 kW (Real Decreto 1164/2001, artículo 9.4). ${ESCALONES.slice(1, 5).map((e) => `${e.a} amperios dan ${h.num(e.kw, 2)} kW`).join(', ')}. Con un contador inteligente la distribuidora puede cambiar la potencia a distancia, sin visita.</p>
 <p>La potencia es la parte de la factura que no depende de la hora, y la ${h.a('factura', 'factura completa')} la muestra junto a la energía. Si cargas el coche en casa, la guía de ${h.a('coche', 'carga del coche eléctrico')} explica por qué subir solo la potencia de valle suele bastar.</p>`;
     },
   },
@@ -67,7 +67,7 @@ ${h.table(['Pieza', 'Punta-llano (P1)', 'Valle (P2)', 'Norma'], [
       return [
         { q: 'How much power does my home need?', a: `Add up what runs at the same time at the busiest moment of the day: oven, induction hob, washing machine heating water, water heater, air conditioning. Each appliance shows its power in watts on its rating plate. Pick the first step above that total, with a little headroom for the fridge and lighting, which are always on.` },
         { q: 'Can I have different power at peak and off-peak?', a: `Yes. The 2.0TD tariff lets you contract two powers, one for peak-standard (P1) and one for off-peak (P2). Off-peak power is far cheaper, ${h.eur(h.M.POT_P2_PVPC * (1 + v.a.imp.iee) * (1 + v.a.imp.iva), 2)} per kW a year with tax, and worth raising if you charge a car overnight. The calculator’s third field lets you set it separately.` },
-        { q: 'Does changing power cost anything?', a: `The distributor can charge access, connection or extension fees, mainly when you go up. Going down is usually cheap, but you cannot keep changing for free every month. Ask your retailer for the fee before deciding and set it against the yearly saving shown here.` },
+        { q: 'Does changing power cost anything?', a: `Lowering it is free by law unless the meter has to be replaced. Raising it counts as an additional connection and pays access fees, plus extension fees if the grid needs reinforcing. The distributor can refuse another change if you made one in the last twelve months. Ask your retailer for the fee before deciding and set it against the yearly saving shown here.` },
       ];
     },
     body: (h) => {
@@ -78,7 +78,7 @@ ${h.table(['Component', 'Peak-standard (P1)', 'Off-peak (P2)', 'Source'], [
   ['Retail margin', h.num(h.P.comercializacion.margen_fijo_eur_kw_ano, 3), '0', 'Order ETU/1948/2016'],
   ['Total before tax', h.num(h.M.POT_P1_PVPC, 6), h.num(h.M.POT_P2_PVPC, 6), ''],
 ], '€ per kW per year. With electricity tax and VAT, multiply by (1 + tax) × (1 + VAT).', ['l', 'r', 'r', 'l'])}
-<p>The steps in the list are not arbitrary: they are the rating of the power control switch multiplied by 230 volts. ${ESCALONES.slice(1, 5).map((e) => `${e.a} amps gives ${h.num(e.kw, 2)} kW`).join(', ')}. With a smart meter the distributor can change your power remotely, without a visit.</p>
+<p>The steps in the list are not arbitrary: they are the rating of the power control switch multiplied by 230 volts, although with a smart meter any multiple of 0.1 kW up to 15 kW can also be contracted (Royal Decree 1164/2001, article 9.4). ${ESCALONES.slice(1, 5).map((e) => `${e.a} amps gives ${h.num(e.kw, 2)} kW`).join(', ')}. With a smart meter the distributor can change your power remotely, without a visit.</p>
 <p>Power is the part of the bill that does not depend on the hour, and the ${h.a('factura', 'full bill calculator')} shows it next to energy. If you charge a car at home, the ${h.a('coche', 'electric car charging')} page explains why raising only the off-peak power is often enough.</p>`;
     },
   },

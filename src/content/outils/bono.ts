@@ -14,7 +14,7 @@ export default defineGuide({
   order: 4,
   tool: 'bono',
   related: ['factura', 'pvpc', 'libre', 'potencia'],
-  sources: ['rd897', 'rdl7_2026', 'bonoSocialWeb', 'sepeIprem', 'tedCargos2026'],
+  sources: ['rd897', 'rdl7_2026', 'bonoSocialWeb', 'sepeIprem', 'tedCargos2026', 'ted634_2026'],
   es: {
     slug: 'bono-social-luz',
     nav: 'Bono social de la luz',
@@ -33,7 +33,7 @@ export default defineGuide({
         { q: '¿Cuál es el límite de renta para el bono social en 2026?', a: `1,5 veces el IPREM de 14 pagas, ${h.eur(v.u1, 0)} al año, para quien vive solo. Se suma 0,3 por cada adulto más y 0,5 por cada menor, y 1 más si hay discapacidad de al menos el 33 %, dependencia de grado II o III, violencia de género o terrorismo, familia monoparental o electrodependencia. Con dos adultos y dos menores: ${h.eur(v.u22, 0)}.` },
         { q: '¿Cuándo se es vulnerable severo?', a: `Cuando la renta del hogar no llega a la mitad del umbral que le corresponde. También las familias numerosas con renta de hasta dos IPREM (${h.eur(2 * v.B.iprem_14_pagas, 0)}) y los pensionistas con pensión mínima con renta de hasta un IPREM (${h.eur(v.B.iprem_14_pagas, 0)}). El descuento sube entonces al ${h.num(v.B.descuento_severo * 100, 1)} %.` },
         { q: '¿El descuento se aplica a toda la factura?', a: `A la potencia y a la energía hasta un límite anual de kWh que depende del hogar: ${h.num(v.B.limites_kwh_ano[0].kwh)} kWh para una o dos personas y hasta ${h.num(v.B.limites_kwh_ano[3].kwh)} para familias numerosas. Lo que se consume por encima se paga a precio PVPC normal. Los impuestos se calculan después del descuento.` },
-        { q: '¿Dónde se pide el bono social?', a: `A una comercializadora de referencia, con el formulario y los documentos que indica el Ministerio en bonosocial.gob.es. La comercializadora comprueba la renta con la Agencia Tributaria. Si tienes una tarifa del mercado libre, hay que pasar antes al PVPC, porque el bono social no existe fuera de él.` },
+        { q: '¿Dónde se pide el bono social?', a: `A una comercializadora de referencia, con el formulario y los documentos que indica el Ministerio para la Transición Ecológica. La comercializadora la tramita en la plataforma del Ministerio, que comprueba la renta sin que la empresa vea esos datos, y debe responder en diez días hábiles. Si tienes una tarifa del mercado libre, hay que pasar antes al PVPC, porque el bono social no existe fuera de él.` },
       ];
     },
     body: (h) => {
@@ -47,7 +47,7 @@ ${h.table(['Hogar', 'Umbral de renta (vulnerable)', 'Umbral (severo)'], [
   ['2 adultos y 2 menores', h.eur(v.u22, 0), h.eur(v.u22 / 2, 0)],
   ['1 adulto y 1 menor (monoparental)', h.eur(h.M.umbralRenta(1, 1, true), 0), h.eur(h.M.umbralRenta(1, 1, true) / 2, 0)],
 ], `Renta anual del hogar, IPREM de 14 pagas de ${h.eur(v.B.iprem_14_pagas, 0)} (${h.src('sepeIprem', 'SEPE')}). La familia monoparental suma 1 al multiplicador.`, ['l', 'r', 'r'])}
-<p>La solicitud se hace con la comercializadora de referencia; el Ministerio explica los pasos y los formularios en ${h.src('bonoSocialWeb', 'bonosocial.gob.es')}. Una vez concedido, el bono dura dos años y se renueva si se siguen cumpliendo los requisitos. El descuento rebaja la potencia y la energía hasta el límite de kWh; el contador y los impuestos de la ${h.a('factura', 'factura')} se siguen pagando como en cualquier otro contrato.</p>`;
+<p>La solicitud se hace con la comercializadora de referencia; el Ministerio explica los pasos y da la lista de comercializadoras de referencia, también las de Ceuta y Melilla, en su ${h.src('bonoSocialWeb', 'página del bono social')}. Una vez concedido, el bono se aplica durante dos años (a las familias numerosas, mientras esté vigente su título); antes de que venza, la comercializadora vuelve a comprobar los requisitos y, si se cumplen, lo renueva por otros dos años (Real Decreto 897/2017, artículos 9 y 10). El descuento rebaja la potencia y la energía hasta el límite de kWh; el contador y los impuestos de la ${h.a('factura', 'factura')} se siguen pagando como en cualquier otro contrato.</p>`;
     },
   },
   en: {
@@ -68,7 +68,7 @@ ${h.table(['Hogar', 'Umbral de renta (vulnerable)', 'Umbral (severo)'], [
         { q: 'What is the income limit for the bono social in 2026?', a: `1.5 times the 14-payment IPREM, ${h.eur(v.u1, 0)} a year, for someone living alone. Add 0.3 per extra adult and 0.5 per child, and 1 more for a disability of 33% or more, grade II or III dependency, gender or terrorist violence, a single-parent family or electricity-dependent medical equipment. Two adults and two children: ${h.eur(v.u22, 0)}.` },
         { q: 'Who counts as severely vulnerable?', a: `A household whose income is below half its threshold. Also large families with income up to twice the IPREM (${h.eur(2 * v.B.iprem_14_pagas, 0)}) and minimum-pension pensioners with income up to one IPREM (${h.eur(v.B.iprem_14_pagas, 0)}). The discount then rises to ${h.num(v.B.descuento_severo * 100, 1)}%, and the household may also be protected from disconnection if social services support it.` },
         { q: 'Does the discount apply to the whole bill?', a: `To power and to energy up to a yearly kWh cap that depends on the household: ${h.num(v.B.limites_kwh_ano[0].kwh)} kWh for one or two people and up to ${h.num(v.B.limites_kwh_ano[3].kwh)} for large families. Anything above is charged at the normal PVPC price. Taxes are worked out after the discount.` },
-        { q: 'Where do I apply for the bono social?', a: `With a reference retailer, using the form and documents the Ministry lists on bonosocial.gob.es. The retailer checks your income with the Tax Agency. If you are on a market tariff you must switch to the PVPC first, because the bono social does not exist outside it.` },
+        { q: 'Where do I apply for the bono social?', a: `With a reference retailer, using the form and documents listed by the Ministry for the Ecological Transition. The retailer files it on the Ministry’s platform, which checks income without the company seeing that data, and must answer within ten working days. If you are on a market tariff you must switch to the PVPC first, because the bono social does not exist outside it.` },
       ];
     },
     body: (h) => {
@@ -82,7 +82,7 @@ ${h.table(['Household', 'Income threshold (vulnerable)', 'Threshold (severe)'], 
   ['2 adults and 2 children', h.eur(v.u22, 0), h.eur(v.u22 / 2, 0)],
   ['1 adult and 1 child (single parent)', h.eur(h.M.umbralRenta(1, 1, true), 0), h.eur(h.M.umbralRenta(1, 1, true) / 2, 0)],
 ], `Yearly household income, 14-payment IPREM of ${h.eur(v.B.iprem_14_pagas, 0)} (${h.src('sepeIprem', 'SEPE')}). A single-parent family adds 1 to the multiplier.`, ['l', 'r', 'r'])}
-<p>You apply through the reference retailer; the Ministry sets out the steps and forms on ${h.src('bonoSocialWeb', 'bonosocial.gob.es')}. Once granted, the discount lasts two years and is renewed if you still meet the conditions. It reduces power and energy up to the cap, but you still pay, like everyone, the meter and the taxes shown on the ${h.a('factura', 'bill')}.</p>`;
+<p>You apply through the reference retailer; the Ministry sets out the steps and lists the reference retailers, including those for Ceuta and Melilla, on its ${h.src('bonoSocialWeb', 'social discount page')}. Once granted, the discount applies for two years (for large families, while their family card is valid); before it expires the retailer re-checks the conditions and, if they are still met, renews it for two more years (Royal Decree 897/2017, articles 9 and 10). It reduces power and energy up to the cap, but you still pay, like everyone, the meter and the taxes shown on the ${h.a('factura', 'bill')}.</p>`;
     },
   },
 });

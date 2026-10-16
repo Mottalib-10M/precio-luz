@@ -42,7 +42,7 @@ export default defineGuide({
       const v = V(h);
       return [
         { q: '¿Es mejor el PVPC o una tarifa fija?', a: `Depende del precio fijo y de cuándo consumes. En los últimos 30 días, una tarifa fija habría ganado al PVPC por debajo de ${h.kwh(v.empate, 4)} sin impuestos con la misma potencia. El PVPC sigue al mercado: en meses baratos gana, en meses caros pierde, y a cambio no tiene permanencia.` },
-        { q: '¿Puedo volver al PVPC si me paso al mercado libre?', a: `Sí. El PVPC es un derecho de los consumidores con hasta 10 kW, según el artículo 17 de la Ley 24/2013, y se contrata con cualquier comercializadora de referencia. Mira antes si tu contrato libre tiene penalización por permanencia, que debe figurar en las condiciones.` },
+        { q: '¿Puedo volver al PVPC si me paso al mercado libre?', a: `Sí. Pueden volver al PVPC las personas físicas y las microempresas con hasta 10 kW (artículo 5.3 del Real Decreto 216/2014, que desarrolla el artículo 17 de la Ley 24/2013); se contrata con cualquier comercializadora de referencia. Mira antes si tu contrato libre tiene penalización por permanencia, que debe figurar en las condiciones.` },
         { q: '¿Qué precio de la potencia pongo para la oferta libre?', a: `El que aparezca en la oferta, en céntimos por kW y día: 0,0864 €/kW·día se escribe 8,64. Si viene por año, divídelo entre 365. Por defecto el campo lleva el término de potencia regulado del PVPC, ${h.num(v.potDia * 100, 2)} céntimos por kW y día, para que la comparación empiece solo con la diferencia de la energía.` },
       ];
     },
@@ -71,7 +71,7 @@ export default defineGuide({
       const v = V(h);
       return [
         { q: 'Is the PVPC better than a fixed tariff?', a: `It depends on the fixed price and on when you use power. Over the last 30 days a fixed deal would have beaten the PVPC below ${h.kwh(v.empate, 4)} before tax, with the same power. The PVPC tracks the market: it wins in cheap months and loses in dear ones, and it has no tie-in.` },
-        { q: 'Can I go back to the PVPC after switching?', a: `Yes. The PVPC is a right for consumers with up to 10 kW under article 17 of Act 24/2013, and you sign up with any reference retailer. Check first whether your market contract has an early-exit penalty, which must appear in its terms.` },
+        { q: 'Can I go back to the PVPC after switching?', a: `Yes. Individuals and micro-enterprises with up to 10 kW can return to the PVPC (article 5.3 of Royal Decree 216/2014, under article 17 of Act 24/2013); you sign up with any reference retailer. Check first whether your market contract has an early-exit penalty, which must appear in its terms.` },
         { q: 'What power price should I enter for the fixed offer?', a: `Whatever the offer states, in cents per kW per day: 0.0864 €/kW·day is entered as 8.64. If it is per year, divide by 365. By default the field holds the PVPC’s regulated power term, ${h.num(v.potDia * 100, 2)} cents per kW per day, so the comparison starts from the energy difference alone. Overwrite it with your offer’s figure.` },
       ];
     },

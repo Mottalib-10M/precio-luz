@@ -37,11 +37,11 @@ export const HOME: Record<'es' | 'en', HomeText> = {
     faqs: (h) => {
       const v = datos(h);
       return [
-        { q: '¿A qué hora se publica el precio de la luz de mañana?', a: `Red Eléctrica publica los 24 precios del PVPC del día siguiente cada tarde hacia las 20:15. Esta página se regenera sola poco después, a partir de las 20:40 y otra vez una hora más tarde, y el día de mañana aparece en la pestaña «Mañana». Antes de esa hora mostramos un precio medio estimado y lo decimos claramente.` },
+        { q: '¿A qué hora se publica el precio de la luz de mañana?', a: `Red Eléctrica publica los 24 precios del PVPC del día siguiente cada tarde antes de las 20:15, como le obliga el Real Decreto 216/2014. Esta página se regenera sola poco después, a partir de las 20:40 y otra vez una hora más tarde, y el día de mañana aparece en la pestaña «Mañana». Antes de esa hora mostramos un precio medio estimado y lo decimos claramente.` },
         { q: '¿El precio de la tabla incluye impuestos?', a: `El archivo de Red Eléctrica da el término de energía sin impuestos. Nosotros le sumamos el impuesto eléctrico (${pct(h, v.imp.iee, 2)}) y el IVA (${pct(h, v.imp.iva, 0)}), o el IGIC al 0 % en Canarias para viviendas de hasta 10 kW. La opción «Excluidos» muestra la cifra de Red Eléctrica tal cual.` },
         { q: '¿Por qué el precio sale con 24 horas y no por cuartos de hora?', a: `El mercado mayorista fija un precio cada 15 minutos desde el 1 de octubre de 2025, pero el PVPC que se factura sigue teniendo 24 precios al día: los contadores de los hogares registran el consumo por horas. Los 96 cuartos del mercado los puedes ver en la página de ${'cuartos de hora'}.` },
         { q: '¿Cuál es la hora más barata para poner la lavadora hoy?', a: `Con los precios de hoy, un lavado de ${h.num(v.lav, 2)} kWh (lavadora de 8 kg, clase C, programa eco) sale más barato si empieza a las ${h.M.reloj(v.lavBarata.inicio)}: ${h.eur(v.lavBarata.coste, 2)} con impuestos. La calculadora de esta página lo recalcula con la hora y el aparato que elijas.` },
-        { q: '¿El precio es el mismo en toda España?', a: `El término de energía del PVPC es el mismo en la Península, Baleares y Canarias. Cambian los impuestos: en Canarias no se paga IVA sino IGIC, que es del 0 % para la vivienda con hasta 10 kW. Ceuta y Melilla tienen otro precio publicado y su propio impuesto local, el IPSI, que esta página no calcula.` },
+        { q: '¿El precio es el mismo en toda España?', a: `El término de energía del PVPC es el mismo en la Península, Baleares y Canarias. Cambian los impuestos: en Canarias no se paga IVA sino IGIC, que es del 0 % para la vivienda con hasta 10 kW. Ceuta y Melilla tienen su propio precio, porque allí la punta y el llano empiezan una hora más tarde, y pagan IPSI al 1 % en lugar de IVA, según la ordenanza fiscal de cada ciudad. Elige tu territorio en «Dónde vives».` },
         { q: '¿Qué parte del precio no depende del mercado?', a: `Los peajes de la CNMC y los cargos del Ministerio del término de energía: en ${h.P.year} suman ${h.kwh(v.reg.P1, 4)} en punta, ${h.kwh(v.reg.P2, 4)} en llano y ${h.kwh(v.reg.P3, 4)} en valle, sin impuestos. Por eso el valle, de 0 a 8 horas y todo el fin de semana, parte con ventaja.` },
         { q: '¿Estos precios sirven si tengo una tarifa del mercado libre?', a: `Solo si tu contrato es indexado al mercado. Con una tarifa de precio fijo pagas lo mismo a cualquier hora, y la tabla te sirve para comparar: el simulador de facturas calcula lo que habrías pagado en los últimos 30 días con el PVPC y con tu precio fijo.` },
       ];
@@ -95,11 +95,12 @@ ${h.table(['Concepto', 'Importe', 'Norma'], [
   ['Cargo de potencia punta-llano (P1)', `${h.num(P.cargos.potencia_eur_kw_ano.P1, 6)} €/kW·año`, 'Orden TED/1524/2025'],
   ['Margen de comercialización del PVPC', `${h.num(P.comercializacion.margen_fijo_eur_kw_ano, 3)} €/kW·año`, 'Orden ETU/1948/2016'],
   ['Peaje + cargo de potencia valle (P2)', `${h.num(P.peajes.potencia_eur_kw_ano.P2 + P.cargos.potencia_eur_kw_ano.P2, 6)} €/kW·año`, 'CNMC y Orden TED/1524/2025'],
-  ['Financiación del bono social', `${h.num(P.bono_social_financiacion.eur_cups_ano, 6)} €/año`, 'Orden TED/1524/2025'],
+  ['Financiación del bono social', `${h.num(P.bono_social_financiacion.eur_cups_ano, 6)} €/año`, 'Orden TED/634/2026 (desde el 26/06/2026)'],
   ['Alquiler del contador inteligente', `${h.num(P.contador.alquiler_eur_mes, 2)} €/mes`, 'Orden ITC/3860/2007'],
   ['Impuesto especial sobre la electricidad', pct(h, v.imp.iee, 8), 'Ley 38/1992'],
   ['IVA (Península y Baleares)', pct(h, v.imp.iva, 0), 'Ley 37/1992'],
   ['IGIC (Canarias, vivienda hasta 10 kW)', '0 %', 'Decreto Legislativo 1/2025 de Canarias'],
+  ['IPSI (Ceuta y Melilla, sustituye al IVA)', '1 %', 'Ordenanzas fiscales del IPSI de Ceuta (art. 33.Cuatro) y de Melilla (anexo 1)'],
 ], undefined, ['l', 'r', 'l'])}
 <p>Con 4,6 kW contratados, solo la potencia cuesta ${h.eur(v.pot)} al año antes de impuestos. Es el motivo por el que revisar la ${h.a('potencia', 'potencia contratada')} suele ahorrar más que perseguir la hora barata.</p>
 
@@ -143,11 +144,11 @@ ${(() => {
     faqs: (h) => {
       const v = datos(h);
       return [
-        { q: 'When does tomorrow’s electricity price come out in Spain?', a: `Red Eléctrica publishes the 24 PVPC prices for the next day every evening at about 8:15 pm Madrid time. This site rebuilds itself shortly afterwards, from 8:40 pm and again an hour later, and tomorrow then appears under the “Tomorrow” tab. Before that we show an estimated average and label it as such.` },
+        { q: 'When does tomorrow’s electricity price come out in Spain?', a: `Red Eléctrica publishes the 24 PVPC prices for the next day every evening before 8:15 pm Madrid time, as Royal Decree 216/2014 requires. This site rebuilds itself shortly afterwards, from 8:40 pm and again an hour later, and tomorrow then appears under the “Tomorrow” tab. Before that we show an estimated average and label it as such.` },
         { q: 'Do the prices in the table include tax?', a: `Red Eléctrica’s file gives the energy term before tax. We add the electricity tax (${pct(h, v.imp.iee, 2)}) and VAT (${pct(h, v.imp.iva, 0)}), or the Canary Islands’ IGIC at 0% for homes up to 10 kW. The “Excluded” option shows Red Eléctrica’s figure untouched.` },
         { q: 'Why are there 24 hourly prices and not 96 quarter hours?', a: `The wholesale market has set a price for every 15 minutes since 1 October 2025, but the PVPC that households are billed still has 24 prices a day, because domestic meters record consumption hour by hour. The 96 market quarters are on the quarter-hour price page.` },
         { q: 'What is the cheapest time to run the washing machine today?', a: `With today’s prices, a ${h.num(v.lav, 2)} kWh wash (8 kg machine, class C, eco programme) is cheapest if it starts at ${h.M.reloj(v.lavBarata.inicio)}: ${h.eur(v.lavBarata.coste, 2)} including tax. The second calculator on this page reworks it for the start time and the appliance you choose, with tomorrow’s prices too.` },
-        { q: 'Is the price the same everywhere in Spain?', a: `The PVPC energy term is the same on the mainland, the Balearics and the Canary Islands. Taxes differ: the Canaries charge IGIC instead of VAT, at 0% for homes with up to 10 kW. Ceuta and Melilla have a separate published price and a local tax, IPSI, which this site does not calculate.` },
+        { q: 'Is the price the same everywhere in Spain?', a: `The PVPC energy term is the same on the mainland, the Balearics and the Canary Islands. Taxes differ: the Canaries charge IGIC instead of VAT, at 0% for homes with up to 10 kW. Ceuta and Melilla have their own price, because peak and standard hours start an hour later there, and they pay 1% IPSI instead of VAT, under each city’s tax bylaw. Pick your territory under “Where you live”.` },
         { q: 'Which part of the price has nothing to do with the market?', a: `The CNMC tolls and the government charges in the energy term: in ${h.P.year} they add up to ${h.kwh(v.reg.P1, 4)} at peak, ${h.kwh(v.reg.P2, 4)} at standard times and ${h.kwh(v.reg.P3, 4)} off-peak, before tax. That is why off-peak, midnight to 8 am and all weekend, starts with an advantage.` },
         { q: 'I am on a fixed-price deal. Is any of this useful to me?', a: `Only if your contract is indexed to the market. On a fixed price every hour costs the same, and the table becomes a benchmark: the bill calculator works out what the last 30 days would have cost on the PVPC and on your fixed price, taxes on both sides.` },
       ];
@@ -186,7 +187,7 @@ ${h.table(['Item', '€/kWh'], [
 <p>Since 1 October 2025 Spain’s day-ahead market has set a price for each quarter hour, 96 a day. That has not reached PVPC households: the official file still has 24 rows and home meters record by the hour, so a regulated-tariff customer pays the price of each hour. If you are on an indexed market deal, or just want to see how much the wholesale price moves within an hour, the ${h.a('cuartos', 'quarter-hour price page')} shows the day’s 96 prices next to the hourly PVPC.</p>
 
 <h2>Where each cent comes from</h2>
-<p>Each hourly price has three parts. First, energy: from ${P.year}, ${h.num(P.futuros_pvpc.peso_2026 * 100, 0)}% of it is bought through forward products (monthly, quarterly and yearly) and the rest on the day-ahead market, under the Royal Decree 446/2023 method described by the ${h.src('mitecoRd446', 'Ministry for the Ecological Transition')}. Second, transmission and distribution tolls, set by the ${h.src('cnmcPeajes2026', 'CNMC')}. Third, system charges, set by the government in ${h.src('tedCargos2026', 'Order TED/1524/2025')}, which pay for subsidised renewables, past tariff deficits and the extra cost of island grids.</p>
+<p>Each hourly price has three parts. First, energy: from ${P.year}, ${h.num(P.futuros_pvpc.peso_2026 * 100, 0)}% of it is bought through forward products (monthly, quarterly and yearly) and the remaining 45% on the day-ahead and intraday markets, under the Royal Decree 446/2023 method described by the ${h.src('mitecoRd446', 'Ministry for the Ecological Transition')}. Second, transmission and distribution tolls, set by the ${h.src('cnmcPeajes2026', 'CNMC')}. Third, system charges, set by the government in ${h.src('tedCargos2026', 'Order TED/1524/2025')}, which pay for subsidised renewables, past tariff deficits and the extra cost of island grids.</p>
 ${h.table(['2.0TD period', 'When', 'Toll (CNMC)', 'Charge (Ministry)', 'Regulated total'], [
   ['Peak (P1)', 'weekdays 10–14 and 18–22', h.num(P.peajes.energia_eur_kwh.P1, 6), h.num(P.cargos.energia_eur_kwh.P1, 6), h.num(v.reg.P1, 6)],
   ['Standard (P2)', 'weekdays 8–10, 14–18 and 22–24', h.num(P.peajes.energia_eur_kwh.P2, 6), h.num(P.cargos.energia_eur_kwh.P2, 6), h.num(v.reg.P2, 6)],
@@ -201,11 +202,12 @@ ${h.table(['Item', 'Amount', 'Source'], [
   ['Peak-standard power charge (P1)', `${h.num(P.cargos.potencia_eur_kw_ano.P1, 6)} €/kW·year`, 'Order TED/1524/2025'],
   ['PVPC retail margin', `${h.num(P.comercializacion.margen_fijo_eur_kw_ano, 3)} €/kW·year`, 'Order ETU/1948/2016'],
   ['Off-peak power toll + charge (P2)', `${h.num(P.peajes.potencia_eur_kw_ano.P2 + P.cargos.potencia_eur_kw_ano.P2, 6)} €/kW·year`, 'CNMC and Order TED/1524/2025'],
-  ['Social-discount funding', `${h.num(P.bono_social_financiacion.eur_cups_ano, 6)} €/year`, 'Order TED/1524/2025'],
+  ['Social-discount funding', `${h.num(P.bono_social_financiacion.eur_cups_ano, 6)} €/year`, 'Order TED/634/2026 (from 26/06/2026)'],
   ['Smart meter rental', `${h.num(P.contador.alquiler_eur_mes, 2)} €/month`, 'Order ITC/3860/2007'],
   ['Electricity tax', pct(h, v.imp.iee, 8), 'Act 38/1992'],
   ['VAT (mainland and Balearics)', pct(h, v.imp.iva, 0), 'Act 37/1992'],
   ['IGIC (Canaries, homes up to 10 kW)', '0%', 'Canary Islands Legislative Decree 1/2025'],
+  ['IPSI (Ceuta and Melilla, instead of VAT)', '1%', 'IPSI tax bylaws of Ceuta (art. 33.4) and Melilla (annex 1)'],
 ], undefined, ['l', 'r', 'l'])}
 <p>With 4.6 kW contracted, power alone costs ${h.eur(v.pot)} a year before tax. That is why checking your ${h.a('potencia', 'contracted power')} often saves more than chasing the cheap hour.</p>
 

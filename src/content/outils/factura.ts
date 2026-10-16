@@ -22,7 +22,7 @@ export default defineGuide({
   tool: 'factura',
   toolProps: { mode: 'factura' },
   related: ['libre', 'potencia', 'bono', 'impuestos', 'peajes'],
-  sources: ['esiosPvpc', 'cnmcPeajes2026', 'tedCargos2026', 'etuComercializacion', 'itcContador', 'cnmcFactura'],
+  sources: ['esiosPvpc', 'cnmcPeajes2026', 'tedCargos2026', 'ted634_2026', 'etuComercializacion', 'itcContador', 'rd216', 'cnmcFactura'],
   es: {
     slug: 'simulador-factura-luz',
     nav: 'Simulador de factura de la luz',
@@ -33,14 +33,14 @@ export default defineGuide({
     intro: 'Pon tu consumo y tu potencia: te damos la factura que habrías pagado con los precios de los últimos 30 días.',
     resume: (h) => {
       const v = V(h);
-      return `Con 270 kWh en 30 días y 4,6 kW de potencia, la factura PVPC del ${h.dia(v.e.desde)} al ${h.dia(v.e.hasta)} habría sido de ${h.eur(v.f.total, 2)} con impuestos: ${h.eur(v.f.potencia, 2)} de potencia, ${h.eur(v.f.energia, 2)} de energía, ${h.eur(v.f.iee, 2)} de impuesto eléctrico, ${h.eur(v.f.contador, 2)} de contador, ${h.eur(v.f.financiacionBono, 2)} de financiación del bono social y ${h.eur(v.f.indirecto, 2)} de IVA. El simulador no usa un precio medio inventado: reparte tu consumo hora a hora con el perfil de consumo tipo que publica Red Eléctrica para los contadores 2.0TD y paga cada hora a su precio PVPC real. Puedes cambiar los kWh, la potencia, Canarias o la Península y el bono social; la cuenta se rehace al instante y cada línea sale de una norma del BOE citada abajo. Es la misma estructura que verás en la factura de tu comercializadora de referencia.`;
+      return `Con 270 kWh en 30 días y 4,6 kW de potencia, la factura PVPC del ${h.dia(v.e.desde)} al ${h.dia(v.e.hasta)} habría sido de ${h.eur(v.f.total, 2)} con impuestos: ${h.eur(v.f.potencia, 2)} de potencia, ${h.eur(v.f.energia, 2)} de energía, ${h.eur(v.f.iee, 2)} de impuesto eléctrico, ${h.eur(v.f.contador, 2)} de contador, ${h.eur(v.f.financiacionBono, 2)} de financiación del bono social y ${h.eur(v.f.indirecto, 2)} de IVA. El simulador no usa un precio medio inventado: reparte tu consumo hora a hora con el perfil de consumo tipo que publica Red Eléctrica para los contadores 2.0TD y paga cada hora a su precio PVPC real. Puedes cambiar los kWh, la potencia, el territorio (Península y Baleares, Canarias, Ceuta o Melilla, con su precio y su impuesto) y el bono social; la cuenta se rehace al instante y cada línea sale de una norma del BOE citada abajo. Es la misma estructura que verás en la factura de tu comercializadora de referencia.`;
     },
     faqs: (h) => {
       const v = V(h);
       return [
         { q: '¿Por qué mi factura real sale distinta del simulador?', a: `Porque tu reparto horario no es el del perfil tipo de Red Eléctrica, tu periodo de facturación no coincide con estos 30 días y quizá tu potencia en valle es otra. Con el contador inteligente, la comercializadora usa tu consumo de cada hora; el simulador usa el perfil oficial cuando no lo conoce.` },
         { q: '¿Cuánto bajaría la factura con menos potencia?', a: `Con el mismo consumo y 3,45 kW en lugar de 4,6 kW, la factura de estos 30 días bajaría de ${h.eur(v.f.total, 2)} a ${h.eur(v.f2.total, 2)}. La potencia se paga cada día aunque no consumas; antes de bajarla, comprueba que no saltará el interruptor con los aparatos que usas a la vez.` },
-        { q: '¿Qué es la financiación del bono social que aparece en la factura?', a: `Es la parte del coste del bono social que pagan todos los clientes a través de su comercializadora: ${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € por punto de suministro y año en ${h.P.year}, según la Orden TED/1524/2025, repartidos por días en cada factura. Lo paga todo el mundo, tenga o no bono social, y también en el mercado libre.` },
+        { q: '¿Qué es la financiación del bono social que aparece en la factura?', a: `Es la parte del coste del bono social que pagan todos los clientes a través de su comercializadora: ${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € por punto de suministro y año en ${h.P.year}, según la Orden TED/634/2026 desde el 26 de junio (antes, 6,979247 € por la Orden TED/1524/2025), repartidos por días. En el PVPC aparece siempre como línea propia; en el mercado libre la comercializadora puede repercutirlo o integrarlo en su precio.` },
       ];
     },
     body: (h) => {
@@ -49,7 +49,7 @@ export default defineGuide({
 ${h.table(['Línea', 'Cómo se calcula', 'En el ejemplo'], [
   ['Potencia', 'kW × (peaje + cargo + margen) por día, en punta-llano y en valle', h.eur(v.f.potencia, 2)],
   ['Energía', 'kWh de cada hora × precio PVPC de esa hora', h.eur(v.f.energia, 2)],
-  ['Financiación del bono social', `${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € al año, por días`, h.eur(v.f.financiacionBono, 2)],
+  ['Financiación del bono social', `${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € al año, por días (Orden TED/634/2026)`, h.eur(v.f.financiacionBono, 2)],
   ['Impuesto eléctrico', `${h.num(v.f.imp.iee * 100, 8)} % de lo anterior`, h.eur(v.f.iee, 2)],
   ['Alquiler del contador', `${h.num(h.P.contador.alquiler_eur_mes, 2)} € al mes, por días`, h.eur(v.f.contador, 2)],
   ['IVA', `${h.num(v.f.imp.iva * 100, 0)} % sobre todo lo anterior`, h.eur(v.f.indirecto, 2)],
@@ -68,14 +68,14 @@ ${h.table(['Línea', 'Cómo se calcula', 'En el ejemplo'], [
     intro: 'Enter your use and your power: you get the bill you would have paid at the prices of the last 30 days.',
     resume: (h) => {
       const v = V(h);
-      return `With 270 kWh over 30 days and 4.6 kW of contracted power, the PVPC bill from ${h.dia(v.e.desde)} to ${h.dia(v.e.hasta)} would have come to ${h.eur(v.f.total, 2)} including taxes: ${h.eur(v.f.potencia, 2)} for power, ${h.eur(v.f.energia, 2)} for energy, ${h.eur(v.f.iee, 2)} of electricity tax, ${h.eur(v.f.contador, 2)} for the meter, ${h.eur(v.f.financiacionBono, 2)} towards the social discount and ${h.eur(v.f.indirecto, 2)} of VAT. The calculator does not use a made-up average price. It spreads your consumption hour by hour with the standard 2.0TD meter profile Red Eléctrica publishes and charges each hour at its real PVPC price. Change the kWh, the power, mainland or Canary Islands and the social discount, and the sum redoes itself instantly; every line comes from a BOE rule cited below. It follows the same layout as a reference retailer’s bill, so you can hold it up against yours.`;
+      return `With 270 kWh over 30 days and 4.6 kW of contracted power, the PVPC bill from ${h.dia(v.e.desde)} to ${h.dia(v.e.hasta)} would have come to ${h.eur(v.f.total, 2)} including taxes: ${h.eur(v.f.potencia, 2)} for power, ${h.eur(v.f.energia, 2)} for energy, ${h.eur(v.f.iee, 2)} of electricity tax, ${h.eur(v.f.contador, 2)} for the meter, ${h.eur(v.f.financiacionBono, 2)} towards the social discount and ${h.eur(v.f.indirecto, 2)} of VAT. The calculator does not use a made-up average price. It spreads your consumption hour by hour with the standard 2.0TD meter profile Red Eléctrica publishes and charges each hour at its real PVPC price. Change the kWh, the power, your territory (mainland and Balearics, Canaries, Ceuta or Melilla, each with its own price and tax) and the social discount, and the sum redoes itself instantly; every line comes from a BOE rule cited below. It follows the same layout as a reference retailer’s bill, so you can hold it up against yours.`;
     },
     faqs: (h) => {
       const v = V(h);
       return [
         { q: 'Why does my real bill differ from the calculator?', a: `Because your hour-by-hour pattern is not Red Eléctrica’s standard profile, your billing period does not match these 30 days and your off-peak power may differ. With a smart meter the retailer uses your actual hourly use; the calculator uses the official profile when it does not know it.` },
         { q: 'How much would a lower power save?', a: `With the same consumption and 3.45 kW instead of 4.6 kW, this 30-day bill would drop from ${h.eur(v.f.total, 2)} to ${h.eur(v.f2.total, 2)}. Power is paid every day even if you use nothing; before lowering it, check the switch will not trip with the appliances you run together.` },
-        { q: 'What is the social-discount funding line on the bill?', a: `It is the share of the cost of the bono social that every customer pays through their retailer: ${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € per supply point per year in ${h.P.year}, under Order TED/1524/2025, spread by days across each bill. Everyone pays it, with or without the discount, and on market tariffs too.` },
+        { q: 'What is the social-discount funding line on the bill?', a: `It is the share of the cost of the bono social that every customer pays through their retailer: ${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € per supply point per year in ${h.P.year}, under Order TED/634/2026 since 26 June (previously €6.979247 under Order TED/1524/2025), spread by days. On a PVPC bill it is always a separate line; on the free market the retailer may pass it on or build it into its prices.` },
       ];
     },
     body: (h) => {
@@ -84,7 +84,7 @@ ${h.table(['Línea', 'Cómo se calcula', 'En el ejemplo'], [
 ${h.table(['Line', 'How it is worked out', 'In the example'], [
   ['Power', 'kW × (toll + charge + margin) per day, peak-standard and off-peak', h.eur(v.f.potencia, 2)],
   ['Energy', 'kWh in each hour × that hour’s PVPC price', h.eur(v.f.energia, 2)],
-  ['Social-discount funding', `${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € a year, by days`, h.eur(v.f.financiacionBono, 2)],
+  ['Social-discount funding', `${h.num(h.P.bono_social_financiacion.eur_cups_ano, 6)} € a year, by days (Order TED/634/2026)`, h.eur(v.f.financiacionBono, 2)],
   ['Electricity tax', `${h.num(v.f.imp.iee * 100, 8)}% of the above`, h.eur(v.f.iee, 2)],
   ['Meter rental', `${h.num(h.P.contador.alquiler_eur_mes, 2)} € a month, by days`, h.eur(v.f.contador, 2)],
   ['VAT', `${h.num(v.f.imp.iva * 100, 0)}% on everything above`, h.eur(v.f.indirecto, 2)],

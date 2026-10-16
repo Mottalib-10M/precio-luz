@@ -49,3 +49,25 @@ d'heure (contexte, consommateurs à prix indexé). Il ne fabrique pas 96 prix PV
   les données, avec la date de mise à jour, sans logo, « con fines informativos y no con finalidad comercial ».
   Le site est monétisé (AdSense) : point à trancher par l'éditeur (les courtiers concurrents republient les
   mêmes prix). Le site cite la source et la date sur chaque page et n'utilise aucun logo.
+
+## Passe qualité du 2026-10-16 (BRIEF-QUALITE-2026-10-16)
+
+- **Ceuta et Melilla ajoutées** (avant : « no se calculan »). Prix : colonnes CYM et TEUCYM de l'archive e·sios 70
+  (même fichier, 401 jours rechargés), qui suivent le calendrier propre aux deux villes (Circular 3/2020, art. 7.3 :
+  punta 11-15 h et 19-23 h, llano 8-11, 15-19, 23-24 h). Impôts : pas d'IVA (Ley 37/1992, art. 3) ; IPSI 1 % sur le
+  total facturé, lu dans le texte refondu de l'ordonnance de Ceuta (BOCCE extraordinaire du 30/01/2019, copie
+  hacienda.gob.es, art. 26, 32.Dos, 33.Cuatro) et dans l'ordonnance de Melilla (Decreto 584 du 30/04/2021, BOME 5857,
+  anexo 1, segundo ; base art. 11.2) ; impuesto eléctrico et ses rebajas identiques (Ley 38/1992, art. 91). Tests :
+  TEUCYM recoupé heure par heure avec le calendrier CyM et les valeurs BOE sur toute l'année 2026.
+- **bonosocial.gob.es** : le serveur n'envoie pas le certificat intermédiaire (FNMT « AC SERVIDORES SEGUROS TIPO2
+  G2R ») et la racine « AC RAIZ FNMT-RCM SERVIDORES SEGUROS G2R » (déc. 2025) n'est pas dans le magasin macOS. Avec la
+  chaîne téléchargée sur cert.fnmt.es, `openssl verify` = OK ; le site redirige (301) vers
+  miteco.gob.es/es/energia/pobreza-energetica/pe-001.html. Source remplacée par la page MITECO « cómo solicitarlo »
+  (liste des comercializadoras de referencia, dont Teramelcor à Melilla et Energía Ceuta XXI).
+- **Financement du bono social** : 9,011295 €/CUPS·an depuis le 26/06/2026 (Orden TED/634/2026), 6,979247 avant ;
+  le moteur prend la valeur du jour.
+- **Règle de décembre** (RDL 25/2026, art. 19 et 21) : testée (IPC d'octobre à 15,0 → pas de rebaja, 15,1 → IVA 10 %
+  et impuesto eléctrico 0,5 % ; ≤ 10 kW inclus ; > 10 kW sans IVA rebajado ; septembre ne joue pas ; tant que l'INE
+  n'a pas publié, tipos generales marqués « pendiente »). Vulnérable sévère : IVA rebajado quelle que soit la potence.
+- Règles des guides relues à la source (RD 216/2014 art. 5.3, 8.4, 9 ; RD 897/2017 art. 8-10 ; RD 1164/2001 art. 9.4 ;
+  RD 244/2019 art. 14 ; Resolución DGT 17/10/2025) : 11 phrases corrigées, 6 sources ajoutées.

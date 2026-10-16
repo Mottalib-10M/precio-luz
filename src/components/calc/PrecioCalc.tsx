@@ -8,7 +8,8 @@ import NumberField from '../ui/NumberField';
 import Grafico, { tercio, COLORES } from './Grafico';
 import { Frame, ResultPanel, T, kwh, useParams, type L } from './kit';
 import { useDia } from './useDia';
-import { resumen, masBaratas, mejorBloque, tramo, impuestosDelDia, type Region } from '../../lib/engine/pvpc';
+import { resumen, masBaratas, mejorBloque, tramo, impuestosDelDia, regionDe, esCeutaMelilla, type Region } from '../../lib/engine/pvpc';
+import { opcionesRegion } from './regiones';
 import { displayDate, formatNumber } from '../../lib/format';
 import type { Bundle } from '../../lib/bundle';
 
@@ -16,7 +17,7 @@ interface Props { lang: L; mode?: 'hoy' | 'manana' | 'baratas'; datos: Bundle; m
 
 export default function PrecioCalc({ lang, mode = 'hoy', datos, methodHref }: Props) {
   const [v, set] = useParams({ d: mode === 'manana' ? 1 : 0, r: 0, n: 3, imp: 1 });
-  const region: Region = v.r === 1 ? 'canarias' : 'peninsula';
+  const region: Region = regionDe(v.r);
   const dia = useDia(datos, v.d === 1 ? 1 : 0, 4.6, region);
   const conImp = v.imp !== 0;
   const val = (x: { ttc: number; sin: number }) => (conImp ? x.ttc : x.sin);
@@ -35,6 +36,8 @@ export default function PrecioCalc({ lang, mode = 'hoy', datos, methodHref }: Pr
   const value = mode === 'baratas' ? `${tramo(dia.horas[bloque.inicio].h).slice(0, 5)}–${tramo(dia.horas[bloque.inicio + n - 1].h).slice(6)}` : kwh(mediaSel, lang);
   const impTxt = imp.indirecto === 'IGIC'
     ? T(lang, `impuesto eléctrico ${formatNumber(imp.iee * 100, 2, lang)} % e IGIC 0 %`, `electricity tax ${formatNumber(imp.iee * 100, 2, lang)}% and 0% IGIC`)
+    : imp.indirecto === 'IPSI'
+    ? T(lang, `impuesto eléctrico ${formatNumber(imp.iee * 100, 2, lang)} % e IPSI ${formatNumber(imp.iva * 100, 0, lang)} %`, `electricity tax ${formatNumber(imp.iee * 100, 2, lang)}% and ${formatNumber(imp.iva * 100, 0, lang)}% IPSI`)
     : T(lang, `impuesto eléctrico ${formatNumber(imp.iee * 100, 2, lang)} % e IVA ${formatNumber(imp.iva * 100, 0, lang)} %`, `electricity tax ${formatNumber(imp.iee * 100, 2, lang)}% and ${formatNumber(imp.iva * 100, 0, lang)}% VAT`);
   const rows = [
     ...(mode === 'baratas' ? [{ label: T(lang, `Media de esas ${n} horas`, `Average of those ${n} hours`), value: kwh(conImp ? bloque.media : dia.horas.slice(bloque.inicio, bloque.inicio + n).reduce((s, x) => s + x.sin, 0) / n, lang), strong: true }] : []),
@@ -59,7 +62,7 @@ export default function PrecioCalc({ lang, mode = 'hoy', datos, methodHref }: Pr
           <Toggle id="pc-imp" label={T(lang, 'Impuestos', 'Taxes')} value={String(v.imp)} onChange={(x) => set('imp')(Number(x))} options={[{ value: '1', label: T(lang, 'Incluidos', 'Included') }, { value: '0', label: T(lang, 'Excluidos', 'Excluded') }]} />
         </div>
         <div className="grid grid-cols-2 gap-x-4">
-          <SelectField id="pc-region" label={T(lang, 'Dónde vives', 'Where you live')} value={String(v.r)} onChange={(x) => set('r')(Number(x))} options={[{ value: '0', label: T(lang, 'Península y Baleares', 'Mainland and Balearics') }, { value: '1', label: T(lang, 'Canarias', 'Canary Islands') }]} help={T(lang, 'Ceuta y Melilla tienen otro precio y su propio impuesto (IPSI): no se calculan aquí.', 'Ceuta and Melilla have their own price and tax (IPSI): not calculated here.')} />
+          <SelectField id="pc-region" label={T(lang, 'Dónde vives', 'Where you live')} value={String(v.r)} onChange={(x) => set('r')(Number(x))} options={opcionesRegion(lang)} help={esCeutaMelilla(region) ? T(lang, 'Precio propio de Ceuta y Melilla (columna CYM de Red Eléctrica): la punta va de 11 a 15 h y de 19 a 23 h.', 'Ceuta and Melilla’s own price (Red Eléctrica CYM column): peak runs 11 am–3 pm and 7–11 pm.') : undefined} />
           <NumberField id="pc-n" label={T(lang, 'Horas que necesitas', 'Hours you need')} value={n} onChange={set('n')} unit="h" min={1} max={8} lang={lang} />
         </div>
         <p className="text-sm text-navy-700">{T(lang, `Precio PVPC 2.0TD de Red Eléctrica para ${fechaTxt}, ${conImp ? `con ${impTxt}` : 'sin impuestos'}. Incluye energía, peajes y cargos; la potencia y el contador se pagan aparte (ver la factura).`, `Red Eléctrica PVPC 2.0TD price for ${fechaTxt}, ${conImp ? `with ${impTxt}` : 'before taxes'}. Includes energy, tolls and charges; power and meter are billed separately (see the bill).`)}</p>
@@ -71,7 +74,7 @@ export default function PrecioCalc({ lang, mode = 'hoy', datos, methodHref }: Pr
         )}
       </>}
       result={<ResultPanel lang={lang} head={head} value={value} rows={rows} methodHref={methodHref} badge={aviso}
-        hyp={T(lang, 'Término de energía del PVPC (columna PCB del archivo de Red Eléctrica) multiplicado por (1 + impuesto eléctrico) y por (1 + IVA o IGIC) vigentes ese día. Hora de Madrid.', 'PVPC energy term (PCB column of the Red Eléctrica file) multiplied by (1 + electricity tax) and by (1 + VAT or IGIC) in force that day. Madrid time.')}
+        hyp={T(lang, 'Término de energía del PVPC (columna PCB del archivo de Red Eléctrica, o CYM en Ceuta y Melilla) multiplicado por (1 + impuesto eléctrico) y por (1 + IVA, IGIC o IPSI) vigentes ese día. Hora de Madrid.', 'PVPC energy term (PCB column of the Red Eléctrica file, or CYM in Ceuta and Melilla) multiplied by (1 + electricity tax) and by (1 + VAT, IGIC or IPSI) in force that day. Madrid time.')}
         copyText={`${head}: ${value}`} />}
       after={<>
         <Grafico horas={dia.horas} lang={lang} actual={dia.actual} marca={mode === 'baratas' ? { inicio: bloque.inicio, n } : undefined} conImp={conImp} aria={T(lang, `Precio de la luz hora a hora, ${fechaTxt}`, `Hourly electricity price, ${fechaTxt}`)} />

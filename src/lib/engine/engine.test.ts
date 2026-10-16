@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   impuestosDelDia, conImpuestos, periodo, esDiaValle, diaConImpuestos, resumen, mejorBloque, costeTramo, mejorInicio,
-  perfilEstimado, diaOEstimado, factura, REGULADO_ENERGIA, POT_P1_PVPC, POT_P2_PVPC,
+  perfilEstimado, diaOEstimado, factura, financiacionBonoAnual, REGULADO_ENERGIA, POT_P1_PVPC, POT_P2_PVPC,
   sceLavadora, kwhLavadora, specLavavajillas, kwhLavavajillas, secHorno, kwhHorno, recarga,
   umbralRenta, categoria, limiteKwh, HISTORICO, P,
 } from './index';
@@ -23,6 +23,8 @@ describe('impuestos del día', () => {
     expect([a.iva, a.iee, a.rebaja]).toEqual([0.1, 0.005, true]);
     // « inferior a 10 kW »: exactamente 10 kW queda al 21 %
     expect(impuestosDelDia('2026-04-10', 10).iva).toBe(0.21);
+    // salvo para el vulnerable severo con bono social, sea cual sea la potencia (art. 42)
+    expect(impuestosDelDia('2026-04-10', 10, 'peninsula', undefined, true).iva).toBe(0.1);
     expect(impuestosDelDia('2026-06-01', 4.6).iva).toBe(0.21);
   });
   it('RDL 25/2026: noviembre depende del IPC de septiembre (+11,4 %, sin rebaja); diciembre pendiente del IPC de octubre', () => {
@@ -31,6 +33,43 @@ describe('impuestos del día', () => {
     const alta = impuestosDelDia('2026-11-10', 10, 'peninsula', [{ mes: '2026-09', variacion: 16 }]);
     expect([alta.iva, alta.iee, alta.rebaja]).toEqual([0.1, 0.005, true]); // « inferior o igual a 10 kW »
     expect(impuestosDelDia('2026-12-05', 4.6, 'peninsula', ipc).pendiente).toBe('2026-10');
+  });
+  it('RDL 25/2026, arts. 19 y 21: diciembre depende del IPC de octubre (INE, publicado en noviembre)', () => {
+    // « supera en más de un 15 por ciento »: 15,0 no basta, 15,1 sí.
+    const sin = impuestosDelDia('2026-12-05', 4.6, 'peninsula', [{ mes: '2026-10', variacion: 15 }]);
+    expect([sin.iva, sin.iee, sin.rebaja, sin.pendiente]).toEqual([0.21, 0.0511269632, false, undefined]);
+    const con = impuestosDelDia('2026-12-05', 4.6, 'peninsula', [{ mes: '2026-10', variacion: 15.1 }]);
+    expect([con.iva, con.iee, con.rebaja]).toEqual([0.1, 0.005, true]);
+    // IVA rebajado « inferior o igual a 10 kW »; por encima, IVA general pero impuesto eléctrico rebajado.
+    expect(impuestosDelDia('2026-12-31', 10, 'peninsula', [{ mes: '2026-10', variacion: 20 }]).iva).toBe(0.1);
+    const alto = impuestosDelDia('2026-12-31', 10.1, 'peninsula', [{ mes: '2026-10', variacion: 20 }]);
+    expect([alto.iva, alto.iee]).toEqual([0.21, 0.005]);
+    // El IPC de septiembre no decide diciembre (ni el de octubre noviembre).
+    expect(impuestosDelDia('2026-12-05', 4.6, 'peninsula', [{ mes: '2026-09', variacion: 30 }]).pendiente).toBe('2026-10');
+    expect(impuestosDelDia('2026-11-30', 4.6, 'peninsula', [{ mes: '2026-09', variacion: 11.4 }, { mes: '2026-10', variacion: 30 }]).rebaja).toBe(false);
+    // Mientras el INE no publique octubre: tipos generales, marcados como pendientes.
+    const pend = impuestosDelDia('2026-12-05', 4.6, 'peninsula', []);
+    expect([pend.iva, pend.iee, pend.pendiente]).toEqual([0.21, 0.0511269632, '2026-10']);
+    // Precio con la rebaja: 203,15 €/MWh × 1,005 × 1,10 = 0,224582 €/kWh.
+    expect(conImpuestos(203.15, con)).toBeCloseTo(0.224582, 6);
+    // El 1 de enero de 2027 ya no hay periodo fiscal 2026: tipos generales.
+    expect(impuestosDelDia('2027-01-01', 4.6, 'peninsula', [{ mes: '2026-10', variacion: 30 }]).rebaja).toBe(false);
+  });
+  it('IPC real del INE en el archivo: noviembre sin rebaja (septiembre +11,4 %)', () => {
+    const i = impuestosDelDia('2026-11-10', 4.6);
+    expect([i.iva, i.rebaja, i.pendiente]).toEqual([0.21, false, undefined]);
+  });
+  it('Ceuta y Melilla: IPSI del 1 % en lugar del IVA, impuesto eléctrico y sus rebajas igual', () => {
+    for (const r of ['ceuta', 'melilla'] as const) {
+      const c = impuestosDelDia('2026-10-15', 4.6, r);
+      expect([c.indirecto, c.iva, c.iee]).toEqual(['IPSI', 0.01, 0.0511269632]);
+      const a = impuestosDelDia('2026-04-10', 4.6, r); // RDL 7/2026: el IVA rebajado no existe allí, el impuesto eléctrico sí baja
+      expect([a.iva, a.iee]).toEqual([0.01, 0.005]);
+      const d = impuestosDelDia('2026-12-05', 4.6, r, [{ mes: '2026-10', variacion: 16 }]);
+      expect([d.iva, d.iee]).toEqual([0.01, 0.005]);
+    }
+    // 182,57 €/MWh (columna CYM, 15/10/2026 10-11 h) × 1,0511269632 × 1,01 = 0,193823 €/kWh
+    expect(conImpuestos(182.57, impuestosDelDia('2026-10-15', 4.6, 'ceuta'))).toBeCloseTo(0.193823, 6);
   });
   it('Canarias: IGIC al 0 % en la vivienda hasta 10 kW', () => {
     const c = impuestosDelDia('2026-10-15', 4.6, 'canarias');
@@ -59,6 +98,23 @@ describe('periodos 2.0TD (Circular 3/2020)', () => {
     let n = 0;
     for (const [f, d] of dias) for (const x of diaConImpuestos(f, d)) { expect(Math.abs(x.regulado - REGULADO_ENERGIA[x.periodo])).toBeLessThan(0.00002); n++; }
     expect(n).toBeGreaterThan(4000);
+  });
+  it('Ceuta y Melilla: punta 11-15 y 19-23, llano 8-11, 15-19 y 23-24 (Circular 3/2020, art. 7.3)', () => {
+    expect([7, 8, 10, 11, 14, 15, 19, 22, 23].map((h) => periodo('2026-10-15', h, 'ceuta'))).toEqual(['P3', 'P2', 'P2', 'P1', 'P1', 'P2', 'P1', 'P1', 'P2']);
+    expect(periodo('2026-10-17', 12, 'melilla')).toBe('P3');
+  });
+  it('la columna TEUCYM de Red Eléctrica cuadra en cada hora con el calendario de Ceuta y Melilla y los valores BOE', () => {
+    const dias = Object.entries(HISTORICO).filter(([f, d]) => f >= '2026-01-01' && d.pcm);
+    expect(dias.length).toBeGreaterThan(200);
+    let n = 0;
+    for (const [f, d] of dias) for (const x of diaConImpuestos(f, d, 4.6, 'melilla')) { expect(Math.abs(x.regulado - REGULADO_ENERGIA[x.periodo])).toBeLessThan(0.00002); n++; }
+    expect(n).toBeGreaterThan(4000);
+  });
+  it('15/10/2026, 10-11 h: punta en la Península (252,03 €/MWh), llano en Ceuta y Melilla (182,57 €/MWh)', () => {
+    const d = HISTORICO['2026-10-15'];
+    expect(d.p[10]).toBeCloseTo(252.03, 2);
+    expect(d.pcm?.[10]).toBeCloseTo(182.57, 2);
+    expect(diaConImpuestos('2026-10-15', d, 4.6, 'ceuta')[10].periodo).toBe('P2');
   });
 });
 
@@ -92,23 +148,36 @@ describe('series del día', () => {
 });
 
 describe('factura PVPC 2.0TD', () => {
+  it('financiación del bono social: 6,979247 €/año hasta el 25/06/2026, 9,011295 € desde el 26/06/2026', () => {
+    expect(financiacionBonoAnual('2026-06-25')).toBe(6.979247);
+    expect(financiacionBonoAnual('2026-06-26')).toBe(9.011295);
+    const junio = factura({ dias: 30, kwP1: 4.6, kwP2: 4.6, kwh: 270, energia: 30, fecha: '2026-06-20' });
+    expect(junio.financiacionBono).toBeCloseTo(0.5736, 4); // 6,979247 × 30 / 365
+  });
   it('potencia regulada 2026: P1 = 23,324952 + 4,379461 + 3,113 €/kW·año; P2 = 0,443770 + 0,281653', () => {
     expect(POT_P1_PVPC).toBeCloseTo(30.817413, 6);
     expect(POT_P2_PVPC).toBeCloseTo(0.725423, 6);
   });
-  it('30 días, 4,6 kW, 270 kWh y 30 € de energía en octubre de 2026 → 55,02 €', () => {
+  it('30 días, 4,6 kW, 270 kWh y 30 € de energía en octubre de 2026 → 55,23 € (financiación del bono 9,011295 €/año, Orden TED/634/2026)', () => {
     const f = factura({ dias: 30, kwP1: 4.6, kwP2: 4.6, kwh: 270, energia: 30, fecha: '2026-10-15' });
     expect(f.potencia).toBeCloseTo(11.9258, 4);
-    expect(f.financiacionBono).toBeCloseTo(0.5736, 4);
-    expect(f.iee).toBeCloseTo(2.1729, 4);
+    expect(f.financiacionBono).toBeCloseTo(0.7407, 4);
+    expect(f.iee).toBeCloseTo(2.1814, 4);
     expect(f.contador).toBeCloseTo(0.7989, 4);
-    expect(f.total).toBeCloseTo(55.02, 2);
+    expect(f.total).toBeCloseTo(55.23, 2);
   });
-  it('mismo caso con bono social vulnerable (42,5 %) y límite de 2222 kWh/año → 37,60 €', () => {
+  it('mismo caso en Ceuta: IPSI del 1 % sobre el importe total facturado → 46,10 €', () => {
+    const f = factura({ dias: 30, kwP1: 4.6, kwP2: 4.6, kwh: 270, energia: 30, fecha: '2026-10-15', region: 'ceuta' });
+    expect(f.imp.indirecto).toBe('IPSI');
+    expect(f.baseIndirecto).toBeCloseTo(45.6467, 4);
+    expect(f.indirecto).toBeCloseTo(0.4565, 4);
+    expect(f.total).toBeCloseTo(46.1, 2);
+  });
+  it('mismo caso con bono social vulnerable (42,5 %) y límite de 2222 kWh/año → 37,82 €', () => {
     const f = factura({ dias: 30, kwP1: 4.6, kwP2: 4.6, kwh: 270, energia: 30, fecha: '2026-10-15', bono: 0.425, limiteAnualKwh: 2222 });
     expect(f.kwhConDescuento).toBeCloseTo(182.63, 2);
     expect(f.descuentoBono).toBeCloseTo(13.6927, 4);
-    expect(f.total).toBeCloseTo(37.6, 2);
+    expect(f.total).toBeCloseTo(37.82, 2);
   });
 });
 

@@ -22,7 +22,7 @@ export function useDia(b: Bundle, offset: number, kw: number, region: Region): D
     if (real) horas = diaConImpuestos(fecha, real, kw, region);
     else {
       const e = perfilEstimado(fecha, b.dias);
-      horas = diaConImpuestos(fecha, { p: e.p, t: e.t }, kw, region);
+      horas = diaConImpuestos(fecha, { p: e.p, t: e.t, ...(e.pcm ? { pcm: e.pcm, tcm: e.tcm } : {}) }, kw, region);
       estimado = true; diasUsados = e.dias.length;
     }
     const actual = ahora && ahora.fecha === fecha ? horas.findIndex((x) => x.h === Math.floor(ahora.hora)) : -1;

@@ -23,7 +23,7 @@ export function bundle(opts: { dias?: number; cuartos?: boolean } = {}): Bundle 
   const n = opts.dias ?? 35;
   const hoy = ESTADO.hoy;
   const desde = addDays(hoy, -n);
-  const dias = Object.fromEntries(Object.entries(HISTORICO).filter(([f]) => f >= desde).map(([f, d]) => [f, { p: d.p, t: d.t, ...(d.c ? { c: d.c } : {}), ...(d.h ? { h: d.h } : {}) }]));
+  const dias = Object.fromEntries(Object.entries(HISTORICO).filter(([f]) => f >= desde).map(([f, d]) => [f, { p: d.p, t: d.t, ...(d.pcm ? { pcm: d.pcm, tcm: d.tcm } : {}), ...(d.c ? { c: d.c } : {}), ...(d.h ? { h: d.h } : {}) }]));
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ESTADO.generado)).map((x) => [x.type, x.value]));
   const b: Bundle = { hoy, generado: ESTADO.generado, generadoFecha: `${p.year}-${p.month}-${p.day}`, generadoHora: `${p.hour}:${p.minute}`, dias };
   if (opts.cuartos) b.cuartos = CUARTOS;

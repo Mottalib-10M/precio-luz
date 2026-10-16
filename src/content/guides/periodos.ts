@@ -16,7 +16,7 @@ export default defineGuide({
   mini: 'periodos',
   miniHref: 'baratas',
   related: ['peajes', 'baratas', 'finde', 'potencia', 'coche'],
-  sources: ['cnmcCircular3_2020', 'cnmcPeajes2026', 'tedCargos2026', 'esiosPvpc'],
+  sources: ['cnmcCircular3_2020', 'festivos2026', 'cnmcPeajes2026', 'tedCargos2026', 'esiosPvpc'],
   es: {
     slug: 'periodos-horarios-luz',
     nav: 'Punta, llano y valle',
@@ -33,7 +33,7 @@ export default defineGuide({
       const v = V(h);
       return [
         { q: '¿Qué días son valle todo el día?', a: `Los sábados, los domingos y los festivos nacionales de fecha fija: 1 y 6 de enero, 1 de mayo, 15 de agosto, 12 de octubre, 1 de noviembre y 6, 8 y 25 de diciembre. Los festivos autonómicos y locales, y los que cambian de fecha como el Viernes Santo, siguen el horario de un laborable.` },
-        { q: '¿Cambian los periodos en verano?', a: `No. Desde la reforma de 2021 los horarios de punta, llano y valle son los mismos todo el año en la Península, Baleares y Canarias, en hora local. Ceuta y Melilla tienen un calendario propio. El cambio de hora de octubre y marzo solo hace que un día tenga 25 o 23 horas.` },
+        { q: '¿Cambian los periodos en verano?', a: `No. Desde la reforma de 2021 los horarios de punta, llano y valle son los mismos todo el año en la Península, Baleares y Canarias, en hora local. En Ceuta y Melilla van una hora más tarde: punta de 11 a 15 h y de 19 a 23 h, valle de 0 a 8 h (Circular 3/2020, artículo 7). El cambio de hora de octubre y marzo solo hace que un día tenga 25 o 23 horas.` },
         { q: '¿Por qué una hora de llano puede salir más barata que una de valle?', a: `Porque el periodo solo fija los peajes y cargos; el resto del precio es energía, y la energía del mediodía soleado puede valer casi nada. En los últimos 56 días la media con impuestos fue de ${h.kwh(v.lf.laborable)} en laborables y ${h.kwh(v.lf.finde)} en fines de semana y festivos.` },
         { q: '¿Cuántas horas de cada periodo hay en un laborable?', a: `Ocho de punta (de 10 a 14 y de 18 a 22), ocho de llano (de 8 a 10, de 14 a 18 y de 22 a 24) y ocho de valle (de 0 a 8). En la semana completa, el valle suma 88 de las 168 horas porque cubre también el fin de semana entero.` },
         { q: '¿El periodo de potencia es el mismo que el de energía?', a: `No del todo. La potencia solo tiene dos periodos: P1, que junta punta y llano, de 8 a 24 horas en laborables, y P2, el valle. Por eso puedes contratar más potencia para la noche, por ejemplo para cargar el coche, sin pagar tanto como en el día.` },
@@ -75,7 +75,7 @@ ${h.table(['Franja', 'Lunes a viernes', 'Sábado, domingo y festivo nacional', '
       const v = V(h);
       return [
         { q: 'Which days are off-peak all day?', a: `Saturdays, Sundays and fixed-date national holidays: 1 and 6 January, 1 May, 15 August, 12 October, 1 November and 6, 8 and 25 December. Regional and local holidays, and movable ones such as Good Friday, follow the weekday timetable, so check the national list before planning a holiday wash.` },
-        { q: 'Do the periods change in summer?', a: `No. Since the 2021 reform the peak, standard and off-peak times are the same all year on the mainland, the Balearics and the Canaries, in local time. Ceuta and Melilla have their own calendar. The October and March clock changes only make one day 25 or 23 hours long.` },
+        { q: 'Do the periods change in summer?', a: `No. Since the 2021 reform the peak, standard and off-peak times are the same all year on the mainland, the Balearics and the Canaries, in local time. In Ceuta and Melilla they run an hour later: peak 11 am–3 pm and 7–11 pm, off-peak midnight–8 am (CNMC Circular 3/2020, article 7). The October and March clock changes only make one day 25 or 23 hours long.` },
         { q: 'Why can a standard hour be cheaper than an off-peak one?', a: `Because the period only sets the tolls and charges; the rest of the price is energy, and energy on a sunny midday can be almost free. Over the last 56 days the average with tax was ${h.kwh(v.lf.laborable)} on weekdays and ${h.kwh(v.lf.finde)} on weekends and holidays.` },
         { q: 'How many hours of each period are there on a weekday?', a: `Eight peak (10–14 and 18–22), eight standard (8–10, 14–18 and 22–24) and eight off-peak (0–8). Over a full week off-peak adds up to 88 of the 168 hours, because it also covers the whole weekend. That is more than half the hours, which is why shifting flexible jobs is worth the effort.` },
         { q: 'Is the power period the same as the energy period?', a: `Not quite. Power has only two periods: P1, combining peak and standard, from 8:00 to 24:00 on weekdays, and P2, off-peak. That is why you can contract more power for the night, to charge a car for instance, without paying daytime rates for it.` },

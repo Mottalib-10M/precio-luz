@@ -41,9 +41,23 @@
     "_nota": "Término fijo de los costes de comercialización (CCF) del PVPC fijado por la Orden ETU/1948/2016, anexo II, para 2016-2018; ninguna orden posterior lo ha cambiado. Se aplica a la potencia de punta-llano (P1)."
   },
   "bono_social_financiacion": {
-    "_fuente": "tedCargos2026",
-    "eur_cups_ano": 6.979247,
-    "_nota": "Valor unitario que pagan las comercializadoras por punto de suministro (Orden TED/1524/2025, apartado décimo d); la comercializadora de referencia lo repercute en la factura PVPC prorrateado por días."
+    "_fuente": "ted634_2026",
+    "eur_cups_ano": 9.011295,
+    "periodos": [
+      {
+        "desde": "2026-01-01",
+        "hasta": "2026-06-25",
+        "eur_cups_ano": 6.979247,
+        "fuente": "tedCargos2026"
+      },
+      {
+        "desde": "2026-06-26",
+        "hasta": "2026-12-31",
+        "eur_cups_ano": 9.011295,
+        "fuente": "ted634_2026"
+      }
+    ],
+    "_nota": "Valor unitario por punto de suministro que pagan las comercializadoras; la de referencia lo repercute en la factura PVPC prorrateado por días (RD 216/2014, art. 8.4: «el valor unitario establecido en la correspondiente orden … que resulte de aplicación»). 6,979247 €/CUPS·año por la Orden TED/1524/2025, apartado décimo d), hasta el 25/06/2026; 9,011295 €/CUPS·año por la Orden TED/634/2026, apartado segundo d), con efectos desde el día siguiente a su publicación en el BOE del 25/06/2026. Leído el 2026-10-16."
   },
   "contador": {
     "_fuente": "itcContador",
@@ -57,6 +71,11 @@
     "iva_general": 0.21,
     "igic_canarias_vivienda": 0,
     "igic_umbral_kw": 10,
+    "ipsi_ceuta": 0.01,
+    "_fuente_ipsi_ceuta": "ipsiCeuta",
+    "ipsi_melilla": 0.01,
+    "_fuente_ipsi_melilla": "ipsiMelilla",
+    "_nota_ipsi": "Ceuta y Melilla no aplican IVA (Ley 37/1992, art. 3) sino el IPSI, que cada ciudad fija por ordenanza: «El consumo de energía eléctrica tributará al tipo del 1 %» (Ceuta, art. 33.Cuatro) y «al tipo del 1%» (Melilla, anexo 1, segundo). Base: el importe total facturado (Ceuta art. 32.Dos, Melilla art. 11.2). El impuesto especial sobre la electricidad se aplica «en todo el territorio español» (Ley 38/1992, art. 91), Ceuta y Melilla incluidas, con las rebajas de los RDL. Leído el 2026-10-16.",
     "periodos": [
       {
         "desde": "2025-01-01",
@@ -146,6 +165,39 @@
         8
       ]
     ],
+    "ceuta_melilla": {
+      "punta": [
+        [
+          11,
+          15
+        ],
+        [
+          19,
+          23
+        ]
+      ],
+      "llano": [
+        [
+          8,
+          11
+        ],
+        [
+          15,
+          19
+        ],
+        [
+          23,
+          24
+        ]
+      ],
+      "valle": [
+        [
+          0,
+          8
+        ]
+      ],
+      "_nota": "Circular 3/2020, art. 7.3: en Ceuta y Melilla la punta es de 11 h a 15 h y de 19 h a 23 h, el llano de 8 h a 11 h, de 15 h a 19 h y de 23 h a 24 h, el valle de 0 h a 8 h. Fines de semana y festivos, igual que en la Península."
+    },
     "festivos_nacionales_fecha_fija": [
       "01-01",
       "01-06",
@@ -294,8 +346,8 @@
     "rd216": {
       "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2014-3376",
       "label": {
-        "es": "Real Decreto 216/2014, metodología de cálculo del PVPC, artículo 7 (texto consolidado)",
-        "en": "Royal Decree 216/2014, PVPC calculation method, article 7 (consolidated text)"
+        "es": "Real Decreto 216/2014, metodología del PVPC: artículos 5 (quién puede acogerse), 7 y 8 (factura), 9 (publicación antes de las 20:15) y 10 bis (mercados a plazo), texto consolidado",
+        "en": "Royal Decree 216/2014, PVPC method: articles 5 (who is eligible), 7 and 8 (bill), 9 (publication before 8:15 pm) and 10 bis (forward markets), consolidated text"
       }
     },
     "cnmcCircular3_2020": {
@@ -315,15 +367,15 @@
     "ley38Iee": {
       "url": "https://www.boe.es/buscar/act.php?id=BOE-A-1992-28741",
       "label": {
-        "es": "Ley 38/1992 de Impuestos Especiales, artículos 92 a 104: impuesto especial sobre la electricidad",
-        "en": "Act 38/1992 on Excise Duties, articles 92 to 104: electricity tax"
+        "es": "Ley 38/1992 de Impuestos Especiales, artículos 89 a 104: impuesto especial sobre la electricidad, aplicable en todo el territorio español (art. 91)",
+        "en": "Act 38/1992 on Excise Duties, articles 89 to 104: electricity tax, applicable throughout Spain (art. 91)"
       }
     },
     "ley37Iva": {
       "url": "https://www.boe.es/buscar/act.php?id=BOE-A-1992-28740",
       "label": {
-        "es": "Ley 37/1992 del IVA, artículo 90: tipo general del 21 %",
-        "en": "Act 37/1992 on VAT, article 90: 21% standard rate"
+        "es": "Ley 37/1992 del IVA: artículos 3 (Canarias, Ceuta y Melilla fuera del territorio del IVA), 78.Dos.4.º (el impuesto eléctrico forma parte de la base) y 90 (tipo general del 21 %)",
+        "en": "Act 37/1992 on VAT: articles 3 (Canaries, Ceuta and Melilla outside the VAT territory), 78.2.4 (electricity tax is part of the base) and 90 (21% standard rate)"
       }
     },
     "rdl7_2026": {
@@ -364,22 +416,22 @@
     "rd897": {
       "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2017-11505",
       "label": {
-        "es": "Real Decreto 897/2017, consumidor vulnerable y bono social, artículos 3 y 6 (texto consolidado)",
-        "en": "Royal Decree 897/2017, vulnerable consumers and social discount, articles 3 and 6 (consolidated text)"
+        "es": "Real Decreto 897/2017, consumidor vulnerable y bono social: artículos 3, 6, 8 a 10 y anexo I (texto consolidado)",
+        "en": "Royal Decree 897/2017, vulnerable consumers and social discount: articles 3, 6, 8 to 10 and annex I (consolidated text)"
       }
     },
     "bonoSocialWeb": {
-      "url": "https://www.bonosocial.gob.es/",
+      "url": "https://www.miteco.gob.es/es/energia/pobreza-energetica/pe-001/como-solicitarlo.html",
       "label": {
-        "es": "Ministerio para la Transición Ecológica: bonosocial.gob.es (solicitud y comprobación)",
-        "en": "Ministry for the Ecological Transition: bonosocial.gob.es (application and check)"
+        "es": "Ministerio para la Transición Ecológica: bono social, cómo solicitarlo (comercializadoras de referencia, también en Ceuta y Melilla)",
+        "en": "Ministry for the Ecological Transition: social discount, how to apply (reference retailers, including Ceuta and Melilla)"
       }
     },
     "sepeIprem": {
       "url": "https://www.sepe.es/HomeSepe/prestaciones-desempleo/Cuantias-anuales.html",
       "label": {
-        "es": "SEPE, cuantías anuales: IPREM 2026 en cómputo anual con pagas extra",
-        "en": "SEPE, annual amounts: 2026 IPREM including extra payments"
+        "es": "SEPE, cuantías anuales: IPREM 2026 de 600 € al mes; en cómputo anual con 14 pagas, 8.400 €",
+        "en": "SEPE, annual amounts: 2026 IPREM of €600 a month; €8,400 a year counting 14 payments"
       }
     },
     "mitecoRd446": {
@@ -436,6 +488,55 @@
       "label": {
         "es": "Ley 24/2013 del Sector Eléctrico, artículo 17: precios voluntarios para el pequeño consumidor",
         "en": "Act 24/2013 on the Electricity Sector, article 17: regulated PVPC prices"
+      }
+    },
+    "ipsiCeuta": {
+      "url": "https://www.hacienda.gob.es/BoletinesHacienda/Boletines/2019/62191.pdf",
+      "label": {
+        "es": "Ordenanza fiscal del IPSI de Ceuta, texto refundido (BOCCE extraordinario de 30 de enero de 2019), artículos 26, 32.Dos y 33.Cuatro: consumo de energía eléctrica al 1 %",
+        "en": "Ceuta IPSI tax bylaw, consolidated text (BOCCE special issue, 30 January 2019), articles 26, 32.2 and 33.4: electricity consumption at 1%"
+      }
+    },
+    "ipsiMelilla": {
+      "url": "https://bomemelilla.es/bome/descargar/BOME-P-2021-1300.pdf",
+      "label": {
+        "es": "Ordenanza fiscal del IPSI (operaciones interiores) de Melilla, Decreto n.º 584 de 30 de abril de 2021 (BOME n.º 5857, 4 de mayo de 2021), anexo 1, segundo: consumo de energía eléctrica al 1 %",
+        "en": "Melilla IPSI tax bylaw (domestic transactions), Decree 584 of 30 April 2021 (BOME no. 5857, 4 May 2021), annex 1, second: electricity consumption at 1%"
+      }
+    },
+    "ted634_2026": {
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13759",
+      "label": {
+        "es": "Orden TED/634/2026, de 17 de junio, reparto de la financiación del bono social 2026: 9,011295 € por punto de suministro (BOE-A-2026-13759)",
+        "en": "Order TED/634/2026 of 17 June, 2026 social-discount funding split: €9.011295 per supply point (BOE-A-2026-13759)"
+      }
+    },
+    "rd1164": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2001-20850",
+      "label": {
+        "es": "Real Decreto 1164/2001, artículo 9.4: cambios de potencia (doce meses, sin coste al bajar, múltiplos de 0,1 kW)",
+        "en": "Royal Decree 1164/2001, article 9.4: power changes (twelve months, free to lower, multiples of 0.1 kW)"
+      }
+    },
+    "rd1048": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2013-13767",
+      "label": {
+        "es": "Real Decreto 1048/2013, artículos 25 a 29: derechos de extensión, acceso y enganche",
+        "en": "Royal Decree 1048/2013, articles 25 to 29: extension, access and connection fees"
+      }
+    },
+    "rd244": {
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2019-5089",
+      "label": {
+        "es": "Real Decreto 244/2019, autoconsumo, artículo 14: compensación simplificada de excedentes",
+        "en": "Royal Decree 244/2019, self-consumption, article 14: simplified surplus compensation"
+      }
+    },
+    "festivos2026": {
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667",
+      "label": {
+        "es": "Resolución de 17 de octubre de 2025 de la Dirección General de Trabajo, fiestas laborales de 2026 (BOE-A-2025-21667)",
+        "en": "Directorate-General for Labour Resolution of 17 October 2025, 2026 public holidays (BOE-A-2025-21667)"
       }
     }
   }

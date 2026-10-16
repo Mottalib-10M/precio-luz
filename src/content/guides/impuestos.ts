@@ -1,7 +1,7 @@
 import { defineGuide } from '../../lib/guide-types';
 import type { Helpers } from '../../lib/guide-types';
 
-/** Guía: impuesto eléctrico, IVA e IGIC en la factura de la luz, con las rebajas temporales de 2026. */
+/** Guía: impuesto eléctrico, IVA, IGIC e IPSI en la factura de la luz, con las rebajas temporales de 2026. */
 const V = (h: Helpers) => {
   const hoy = h.R.ESTADO.hoy;
   const imp = h.M.impuestosDelDia(hoy);
@@ -11,7 +11,8 @@ const V = (h: Helpers) => {
   const base = 60;
   const iee = base * imp.iee, iva = (base + iee) * imp.iva;
   const ieeA = base * abr.iee, ivaA = (base + ieeA) * abr.iva;
-  return { hoy, imp, abr, sep, oct, base, iee, iva, ieeA, ivaA };
+  const ipsi = (base + iee) * h.M.impuestosDelDia(hoy, 4.6, 'ceuta').iva;
+  return { hoy, imp, abr, sep, oct, base, iee, iva, ieeA, ivaA, ipsi };
 };
 
 export default defineGuide({
@@ -21,7 +22,7 @@ export default defineGuide({
   mini: 'impuestos',
   miniHref: 'factura',
   related: ['factura', 'historial', 'peajes', 'bono', 'pvpc'],
-  sources: ['ley38Iee', 'ley37Iva', 'rdl7_2026', 'rdl18_2026', 'rdl25_2026', 'ineIpc', 'igicCanarias'],
+  sources: ['ley38Iee', 'ley37Iva', 'rdl7_2026', 'rdl18_2026', 'rdl25_2026', 'ineIpc', 'igicCanarias', 'ipsiCeuta', 'ipsiMelilla'],
   es: {
     slug: 'impuestos-factura-luz',
     nav: 'Impuestos de la luz',
@@ -41,7 +42,7 @@ export default defineGuide({
         { q: '¿El IVA se paga también sobre el impuesto eléctrico?', a: `Sí. La base del IVA es todo lo anterior: potencia, energía, financiación del bono social, impuesto eléctrico y alquiler del contador. Por eso los dos impuestos juntos suben la factura algo más que la suma de sus tipos: con los generales, un ${h.num(((1 + v.imp.iee) * (1 + v.imp.iva) - 1) * 100, 1)} % sobre la potencia y la energía.` },
         { q: '¿Qué es el mínimo del impuesto eléctrico?', a: `La ley fija una cuota mínima de 1 € por MWh consumido en los usos domésticos (0,5 € en los industriales). Con el tipo general casi nunca se alcanza, porque el 5,11 % de una factura normal es mucho más; con el tipo rebajado del 0,5 % sí puede ser la cifra que se aplica.` },
         { q: '¿Qué impuesto paga la luz en Canarias?', a: `El IGIC en lugar del IVA. El texto refundido de 2025 aplica el tipo cero a la electricidad que se entrega a personas físicas en su vivienda con una potencia de hasta 10 kW. El impuesto especial sobre la electricidad sí se paga, al mismo tipo que en la Península.` },
-        { q: '¿Y en Ceuta y Melilla?', a: `No se paga IVA sino el IPSI, un impuesto local que fija cada ciudad en su ordenanza. Como además el PVPC de Ceuta y Melilla tiene sus propios precios publicados, este sitio no calcula esos dos territorios para no dar una cifra que no podemos comprobar.` },
+        { q: '¿Y en Ceuta y Melilla?', a: `No se paga IVA, que la Ley 37/1992 no aplica allí, sino el IPSI de cada ciudad: en las dos, la ordenanza grava el consumo de energía eléctrica al 1 % del importe total facturado. El impuesto eléctrico sí se paga, al mismo tipo y con las mismas rebajas que en la Península, porque la Ley 38/1992 lo aplica en todo el territorio español. El PVPC de Ceuta y Melilla tiene además su propio precio publicado por Red Eléctrica, y es el que usamos al elegir esos territorios.` },
       ];
     },
     body: (h) => {
@@ -60,7 +61,7 @@ ${h.table(['Concepto', 'Hoy', 'En abril de 2026'], [
 <h2>Cómo lo aplica este sitio</h2>
 <p>Los tipos de cada periodo están en el fichero de parámetros del sitio, con la norma que los fija. Para noviembre y diciembre, el programa que actualiza los precios descarga cada día la serie del IPC de la electricidad del ${h.src('ineIpc', 'INE')} y aplica la regla del Real Decreto-ley 25/2026: si la subida anual del mes de referencia supera el 15 %, el mes siguiente se calcula con la rebaja. ${v.sep ? `El dato de septiembre ya está publicado (${h.num(v.sep.variacion, 1)} %), así que noviembre se calcula con los tipos generales.` : ''} ${v.oct ? `El de octubre también (${h.num(v.oct.variacion, 1)} %).` : 'El de octubre se conocerá a mediados de noviembre; hasta entonces, diciembre se muestra con los tipos generales y un aviso.'}</p>
 <h2>Canarias, Ceuta y Melilla</h2>
-<p>En Canarias el IVA no existe: se paga el IGIC, y el ${h.src('igicCanarias', 'texto refundido del IGIC de 2025')} aplica el tipo cero a la electricidad de la vivienda con hasta 10 kW contratados. El impuesto eléctrico sí se paga igual que en la Península. En Ceuta y Melilla se paga el IPSI, que fija cada ciudad; no lo calculamos.</p>
+<p>En Canarias el IVA no existe: se paga el IGIC, y el ${h.src('igicCanarias', 'texto refundido del IGIC de 2025')} aplica el tipo cero a la electricidad de la vivienda con hasta 10 kW contratados. El impuesto eléctrico sí se paga igual que en la Península. En Ceuta y Melilla no hay IVA ni IGIC sino IPSI: el ${h.src('ipsiCeuta', 'texto refundido de la ordenanza de Ceuta')} (artículo 33.Cuatro) y la ${h.src('ipsiMelilla', 'ordenanza de Melilla de 2021')} (anexo 1, apartado segundo) gravan el consumo de energía eléctrica al 1 %, sobre el importe total facturado. Las rebajas del IVA no llegan allí; las del impuesto eléctrico, sí. Una factura de 60 € de potencia y energía paga ${h.eur(v.iee, 2)} de impuesto eléctrico y ${h.eur(v.ipsi, 2)} de IPSI, en lugar de ${h.eur(v.iva, 2)} de IVA.</p>
 <p>Para ver el efecto de los impuestos en tu factura completa, el ${h.a('factura', 'simulador de factura')} los aplica con la fecha de hoy, y el ${h.a('historial', 'historial por meses')} muestra cómo bajó la media con impuestos de abril y mayo.</p>`;
     },
   },
@@ -83,7 +84,7 @@ ${h.table(['Concepto', 'Hoy', 'En abril de 2026'], [
         { q: 'Is VAT charged on the electricity tax as well?', a: `Yes. The VAT base is everything above it: power, energy, social-discount funding, electricity tax and meter rental. So the two taxes together raise the bill a little more than their rates added up: with standard rates, ${h.num(((1 + v.imp.iee) * (1 + v.imp.iva) - 1) * 100, 1)}% on power and energy. The calculators on this site apply both in that order.` },
         { q: 'What is the electricity tax minimum?', a: `The law sets a minimum of 1 € per MWh used in domestic settings (0.5 € for industrial use). At the standard rate it is almost never reached, because 5.11% of a normal bill is much more; at the reduced 0.5% rate it can become the figure that applies.` },
         { q: 'What tax does electricity pay in the Canary Islands?', a: `IGIC instead of VAT. The 2025 consolidated IGIC text applies a zero rate to electricity supplied to individuals in their home with up to 10 kW of power. The special electricity tax is still paid, at the same rate as on the mainland.` },
-        { q: 'What about Ceuta and Melilla?', a: `They pay IPSI instead of VAT, a local tax each city sets by bylaw. Since the PVPC also has separate published prices there, this site does not calculate those two territories rather than give a figure we cannot check. Residents there should rely on their retailer’s bill.` },
+        { q: 'What about Ceuta and Melilla?', a: `There is no VAT, because Act 37/1992 leaves both cities out of its scope. They charge IPSI instead, set by each city’s tax bylaw: in both, electricity consumption is taxed at 1%, on the total amount billed. The electricity tax is still paid, at the same rate and with the same cuts as on the mainland, because Act 38/1992 applies it throughout Spain. Red Eléctrica also publishes a separate PVPC price for Ceuta and Melilla, and that is the one we use when you pick either city.` },
       ];
     },
     body: (h) => {
@@ -102,7 +103,7 @@ ${h.table(['Item', 'Today', 'In April 2026'], [
 <h2>How this site applies it</h2>
 <p>Each period’s rates live in the site’s parameter file, with the rule that sets them. For November and December, the script that updates prices downloads the ${h.src('ineIpc', 'INE')} electricity price index every day and applies the Royal Decree-law 25/2026 rule: if the reference month’s yearly rise exceeds 15%, the following month is worked out with the cut. ${v.sep ? `September’s figure is already out (${h.num(v.sep.variacion, 1)}%), so November is calculated at standard rates.` : ''} ${v.oct ? `October’s is out too (${h.num(v.oct.variacion, 1)}%).` : 'October’s will be known in mid-November; until then December is shown at standard rates with a notice.'}</p>
 <h2>Canary Islands, Ceuta and Melilla</h2>
-<p>There is no VAT in the Canaries: IGIC applies instead, and the ${h.src('igicCanarias', '2025 consolidated IGIC text')} sets a zero rate for home electricity with up to 10 kW. The electricity tax is paid just as on the mainland. Ceuta and Melilla pay IPSI, set by each city; we do not calculate it.</p>
+<p>There is no VAT in the Canaries: IGIC applies instead, and the ${h.src('igicCanarias', '2025 consolidated IGIC text')} sets a zero rate for home electricity with up to 10 kW. The electricity tax is paid just as on the mainland. Ceuta and Melilla have neither VAT nor IGIC but IPSI: the ${h.src('ipsiCeuta', 'consolidated Ceuta bylaw')} (article 33.4) and the ${h.src('ipsiMelilla', '2021 Melilla bylaw')} (annex 1, second section) tax electricity consumption at 1% of the total billed. VAT cuts do not reach them; electricity-tax cuts do. A bill with 60 € of power and energy pays ${h.eur(v.iee, 2)} of electricity tax and ${h.eur(v.ipsi, 2)} of IPSI, instead of ${h.eur(v.iva, 2)} of VAT.</p>
 <p>To see what tax does to your whole bill, the ${h.a('factura', 'bill calculator')} applies today’s rates, and the ${h.a('historial', 'monthly history')} shows how April and May’s tax-inclusive average dropped.</p>
 <p>One practical point for newcomers: tax lines on a Spanish bill appear as “Impuesto eléctrico” or “Impuesto sobre la electricidad” and “IVA”, always at the bottom, after the power and energy terms.</p>`;
     },

@@ -11,7 +11,7 @@ const lang = 'en';
   <div class="prose prose-slate max-w-none">
     <h1>Editorial policy</h1>
     <h2>Sources</h2><p>Primary sources only: Red Eléctrica for prices, the BOE for tolls (CNMC), charges (Ministry), taxes and the social discount, and the INE for the price index that triggers tax cuts. A blog, a comparison site or a retailer’s page is never a source. Each value sits in the parameter file with its rule and the date it was read ({P.retrieved_at}).</p>
-    <h2>What we do not publish</h2><p>A value we could not read in an official source is not published, which is why we do not calculate Ceuta and Melilla. A day’s price that Red Eléctrica has not published is never shown as real: it appears as an estimated average, with a notice. We rank no retailers and take no money to mention anyone.</p>
+    <h2>What we do not publish</h2><p>A value we could not read in an official source is not published: Ceuta and Melilla were only added once we had read the IPSI rate in both cities’ tax bylaws. A day’s price that Red Eléctrica has not published is never shown as real: it appears as an estimated average, with a notice. We rank no retailers and take no money to mention anyone.</p>
     <h2>Checks</h2><p>The engine is tested on every release with hand-worked cases and with every hour of the year, whose tolls and charges must match the BOE. Parameters are reviewed every 1 January and whenever a new rule on the tariff or its taxes is published.</p>
     <h2>Corrections</h2><p>Errors are fixed as soon as confirmed. Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. More in <a href={route('method', lang)}>method and sources</a> and <a href={route('about', lang)}>about us</a>.</p>
   </div>

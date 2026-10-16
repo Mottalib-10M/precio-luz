@@ -17,7 +17,7 @@ export default defineGuide({
   mini: 'finde',
   miniHref: 'baratas',
   related: ['periodos', 'baratas', 'lavadora', 'historial'],
-  sources: ['cnmcCircular3_2020', 'esiosPvpc', 'cnmcPeajes2026'],
+  sources: ['cnmcCircular3_2020', 'festivos2026', 'esiosPvpc', 'cnmcPeajes2026'],
   es: {
     slug: 'precio-luz-fin-de-semana',
     nav: 'Precio de la luz el fin de semana',
@@ -58,7 +58,7 @@ ${h.table(['Tipo de día', 'Precio medio con impuestos', 'Periodo de la energía
 <p>Las que gastan mucho y no tienen prisa: la colada, la secadora, el lavavajillas grande, el horno para cocinar para toda la semana, la plancha. También la carga del coche si no te hace falta antes. Lo que no compensa es cambiar costumbres de madrugada: esas horas ya son valle entre semana y la diferencia se reduce a lo que haga el mercado.</p>
 <p>Si quieres afinar más, la página de ${h.a('baratas', 'horas baratas')} da el mejor tramo de cada día, también de los sábados y domingos, y la de la ${h.a('lavadora', 'lavadora')} calcula el coste de un lavado a cada hora. Las diferencias por meses están en el ${h.a('historial', 'historial')}.</p>
 <h2>Los puentes y el 12 de octubre</h2>
-<p>Un festivo nacional de fecha fija que cae entre semana se factura como un domingo: todo el día en valle. Es lo que pasó el lunes 12 de octubre de 2026. Los puentes que añaden las comunidades o los ayuntamientos, en cambio, no cambian nada en la factura: para la tarifa eléctrica son días laborables. La guía de ${h.a('periodos', 'periodos horarios')} tiene la lista completa de festivos que cuentan.</p>`;
+<p>Un festivo nacional de fecha fija que cae entre semana se factura como un domingo: todo el día en valle. Es lo que pasó el lunes 12 de octubre de 2026. Los puentes que añaden las comunidades o los ayuntamientos, en cambio, no cambian nada en la factura: para la tarifa eléctrica son días laborables. La Circular 3/2020 solo cuenta el 6 de enero y los festivos nacionales de fecha fija no sustituibles del ${h.src('festivos2026', 'calendario laboral oficial')}: en 2026, el 1 de noviembre y el 6 de diciembre caen en domingo, y los lunes 2 de noviembre y 7 de diciembre que declaran algunas comunidades se facturan como laborables. La guía de ${h.a('periodos', 'periodos horarios')} tiene la lista completa de festivos que cuentan.</p>`;
     },
   },
   en: {
@@ -99,7 +99,7 @@ ${h.table(['Type of day', 'Average price with taxes', 'Energy period'], [
 <p>The power-hungry ones that are not urgent: laundry, the tumble dryer, a full dishwasher, batch cooking in the oven, ironing. Car charging too, if you do not need the car sooner. What does not pay is changing early-morning habits: those hours are already off-peak on weekdays and the difference comes down to the market.</p>
 <p>To fine-tune, the ${h.a('baratas', 'cheapest hours')} page gives the best slot of every day, weekends included, and the ${h.a('lavadora', 'washing machine')} page prices a wash at each hour. Month-by-month differences are in the ${h.a('historial', 'history')}.</p>
 <h2>Bank holidays and 12 October</h2>
-<p>A fixed-date national holiday that falls on a weekday is billed like a Sunday: off-peak all day. That is what happened on Monday 12 October 2026. Extra days off added by regions or town halls, by contrast, change nothing on the bill: for the electricity tariff they are working days. The ${h.a('periodos', 'time-of-use periods')} guide has the full list of holidays that count.</p>
+<p>A fixed-date national holiday that falls on a weekday is billed like a Sunday: off-peak all day. That is what happened on Monday 12 October 2026. Extra days off added by regions or town halls, by contrast, change nothing on the bill: for the electricity tariff they are working days. Circular 3/2020 only counts 6 January and the non-substitutable fixed-date national holidays in the ${h.src('festivos2026', 'official public-holiday calendar')}: in 2026, 1 November and 6 December fall on a Sunday, and the Mondays 2 November and 7 December that some regions declare are billed as working days. The ${h.a('periodos', 'time-of-use periods')} guide has the full list of holidays that count.</p>
 <h2>When the weekend is not cheaper</h2>
 <p>The off-peak advantage covers tolls and charges, not the market. A Saturday with little wind and heavy cloud, or with high gas prices across Europe, can carry a market price high enough to cancel it out, especially in the evening. That is why the table for each day is worth a glance before you plan around the weekend: the rule of thumb holds on average, as the eight-week figures above show, but not every single weekend. The ${h.a('home', 'today’s price')} page and the ${h.a('manana', 'tomorrow’s price')} page give the exact answer for the two days ahead.</p>
 <p>A second caveat is the appliance itself. Moving a wash from 21:00 on a Wednesday to 21:00 on a Saturday saves the peak toll; moving it from 03:00 on a Wednesday to 03:00 on a Saturday saves almost nothing, because both hours were already off-peak. The mini calculator at the top shows exactly that for any hour you pick.</p>

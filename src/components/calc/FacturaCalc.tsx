@@ -9,16 +9,18 @@ import { Frame, ResultPanel, T, eur, kwh, nr, useParams, type L } from './kit';
 import { factura, repartoPerfil, POT_P1_PVPC, POT_P2_PVPC } from '../../lib/engine/factura';
 import { limiteKwh } from '../../lib/engine/bono';
 import { P } from '../../lib/engine/params';
+import { regionDe, serieRegion, type Region } from '../../lib/engine/pvpc';
+import { opcionesRegion } from './regiones';
 import { displayDate } from '../../lib/format';
 import type { Bundle } from '../../lib/bundle';
 
 interface Props { lang: L; mode?: 'factura' | 'comparar'; datos: Bundle; precioLibre: number; methodHref?: string; bono?: boolean }
 
 /** Energía (€ sin impuestos) de `kwh` repartidos con el perfil COF2TD sobre los días del periodo. */
-export function energiaPeriodo(datos: Bundle, desde: string, hasta: string, kwhTotal: number) {
+export function energiaPeriodo(datos: Bundle, desde: string, hasta: string, kwhTotal: number, region: Region = 'peninsula') {
   const dias = Object.keys(datos.dias).filter((f) => f >= desde && f <= hasta).sort();
   const precios: number[] = [], perfil: number[] = [];
-  for (const f of dias) { const d = datos.dias[f]; d.p.forEach((p, i) => { precios.push(p / 1000); perfil.push(d.c?.[i] ?? 1); }); }
+  for (const f of dias) { const d = datos.dias[f]; serieRegion(d, region).p.forEach((p, i) => { precios.push(p / 1000); perfil.push(d.c?.[i] ?? 1); }); }
   const reparto = repartoPerfil(kwhTotal, perfil);
   const energia = reparto.reduce((s, k, i) => s + k * precios[i], 0);
   return { energia, dias: dias.length, desde: dias[0], hasta: dias[dias.length - 1], precioMedio: kwhTotal > 0 ? energia / kwhTotal : 0 };
@@ -30,8 +32,8 @@ export default function FacturaCalc({ lang, mode = 'factura', datos, precioLibre
   const potLibreDef = Math.round(((POT_P1_PVPC + POT_P2_PVPC) / 365) * 10000) / 100; // céntimos por kW y día
   const [v, set] = useParams({ kw: 4.6, kwh: 270, r: 0, b: bono ? 1 : 0, per: 2, lib: Math.round(precioLibre * 10000) / 100, plib: potLibreDef });
   const hasta = datos.hoy, desde = addDays(hasta, -29);
-  const e = energiaPeriodo(datos, desde, hasta, v.kwh);
-  const region = v.r === 1 ? 'canarias' as const : 'peninsula' as const;
+  const region = regionDe(v.r);
+  const e = energiaPeriodo(datos, desde, hasta, v.kwh, region);
   const desc = v.b === 2 ? P.bono_social.descuento_severo : v.b === 1 ? P.bono_social.descuento_vulnerable : 0;
   const lim = limiteKwh(Math.round(v.per), 0, 'renta');
   const f = factura({ dias: e.dias, kwP1: v.kw, kwP2: v.kw, kwh: v.kwh, energia: e.energia, fecha: hasta, region, bono: desc, limiteAnualKwh: lim });
@@ -72,7 +74,7 @@ export default function FacturaCalc({ lang, mode = 'factura', datos, precioLibre
           <NumberField id="fc-kw" label={T(lang, 'Potencia contratada', 'Contracted power')} value={v.kw} onChange={set('kw')} unit="kW" min={0.5} max={15} decimals={2} lang={lang} />
         </div>
         <div className="grid grid-cols-2 gap-x-4">
-          <SelectField id="fc-r" label={T(lang, 'Dónde vives', 'Where you live')} value={String(v.r)} onChange={(x) => set('r')(Number(x))} options={[{ value: '0', label: T(lang, 'Península y Baleares (IVA)', 'Mainland and Balearics (VAT)') }, { value: '1', label: T(lang, 'Canarias (IGIC 0 %)', 'Canary Islands (0% IGIC)') }]} />
+          <SelectField id="fc-r" label={T(lang, 'Dónde vives', 'Where you live')} value={String(v.r)} onChange={(x) => set('r')(Number(x))} options={opcionesRegion(lang, true)} />
           <SelectField id="fc-b" label={T(lang, 'Bono social', 'Social discount')} value={String(v.b)} onChange={(x) => set('b')(Number(x))} options={[{ value: '0', label: T(lang, 'No', 'No') }, { value: '1', label: T(lang, `Vulnerable (${nr(P.bono_social.descuento_vulnerable * 100, lang, 1)} %)`, `Vulnerable (${nr(P.bono_social.descuento_vulnerable * 100, lang, 1)}%)`) }, { value: '2', label: T(lang, `Vulnerable severo (${nr(P.bono_social.descuento_severo * 100, lang, 1)} %)`, `Severely vulnerable (${nr(P.bono_social.descuento_severo * 100, lang, 1)}%)`) }]} />
         </div>
         {v.b > 0 && <div className="grid grid-cols-2 gap-x-4"><NumberField id="fc-per" label={T(lang, 'Personas en casa', 'People at home')} value={v.per} onChange={set('per')} min={1} max={12} lang={lang} help={T(lang, `Límite con descuento: ${nr(lim, lang)} kWh al año.`, `Discount limit: ${nr(lim, lang)} kWh a year.`)} /></div>}

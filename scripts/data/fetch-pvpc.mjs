@@ -7,7 +7,9 @@
  *  1. PVPC 2.0TD hora a hora : archivo público n.º 70 de e·sios (Red Eléctrica), un JSON por día
  *     https://api.esios.ree.es/archives/70/download_json?locale=es&date=AAAA-MM-DD
  *     Columnas usadas : PCB (término de energía del PVPC, €/MWh, Península, Canarias y Baleares, sin impuestos)
- *     y TEUPCB (parte de peajes y cargos de ese término), y COF2TD (perfil de consumo tipo 2.0TD). Red Eléctrica publica el día siguiente hacia las 20:15.
+ *     y TEUPCB (parte de peajes y cargos de ese término), CYM y TEUCYM (las mismas columnas para Ceuta y Melilla,
+ *     cuyo calendario de punta, llano y valle va una hora más tarde, Circular 3/2020 art. 7) y COF2TD
+ *     (perfil de consumo tipo 2.0TD). Red Eléctrica publica el día siguiente hacia las 20:15.
  *  2. Precio del mercado diario cada cuarto de hora (96 valores) : API REData de Red Eléctrica
  *     https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real (serie « Precio mercado spot »).
  *  3. IPC de la subclase Electricidad, variación anual : INE, serie IPC291482 (API Tempus 3), que activa
@@ -49,7 +51,8 @@ async function getJSON(url, headers = {}) {
   return null;
 }
 
-/** Un día del archivo 70 : { p: [€/MWh], t: [€/MWh peajes y cargos], h: [hora de inicio] } o null. */
+/** Un día del archivo 70 : { p: [€/MWh], t: [€/MWh peajes y cargos], pcm/tcm: lo mismo en Ceuta y Melilla,
+ *  h: [hora de inicio] } o null. */
 async function diaPVPC(fecha) {
   const j = await getJSON(`https://api.esios.ree.es/archives/70/download_json?locale=es&date=${fecha}`);
   const filas = j?.PVPC;
@@ -61,13 +64,17 @@ async function diaPVPC(fecha) {
   // Perfil inicial de consumo 2.0TD publicado por Red Eléctrica (fracción del consumo anual tipo en esa hora).
   const c = filas.map((f) => Number(num(f.COF2TD).toPrecision(6)));
   if (p.some((x) => !Number.isFinite(x))) return null;
+  // Ceuta y Melilla : columnas propias (otro calendario de periodos, mismos peajes y cargos del BOE).
+  const pcm = filas.map((f) => num(f.CYM));
+  const tcm = filas.map((f) => num(f.TEUCYM));
+  const cym = pcm.every(Number.isFinite) && tcm.every(Number.isFinite) ? { pcm, tcm } : {};
   // Hora de inicio de cada fila : 24 filas normales, 25 el día del cambio a horario de invierno
   // (la hora 02 se repite), 23 el día del cambio a horario de verano (no hay hora 02).
   let h;
   if (filas.length === 24) h = undefined;
   else if (filas.length === 25) h = [0, 1, 2, 2, ...Array.from({ length: 21 }, (_, i) => i + 3)];
   else h = filas.map((f) => Number(f.Hora.slice(0, 2)));
-  return h ? { p, t, c, h } : { p, t, c };
+  return h ? { p, t, c, ...cym, h } : { p, t, c, ...cym };
 }
 
 /** Cuartos de hora del mercado diario (Red Eléctrica, REData) para unas fechas. */
@@ -102,7 +109,7 @@ async function main() {
     // Días que faltan en la ventana, más los tres últimos (Red Eléctrica puede corregir) y mañana.
     const desde = addDays(hoy, -DIAS);
     const objetivo = [];
-    for (let f = desde; f <= manana; f = addDays(f, 1)) if (!hist.dias[f] || !hist.dias[f].c || f >= addDays(hoy, -2)) objetivo.push(f);
+    for (let f = desde; f <= manana; f = addDays(f, 1)) if (!hist.dias[f] || !hist.dias[f].c || !hist.dias[f].pcm || f >= addDays(hoy, -2)) objetivo.push(f);
     let ok = 0;
     for (const f of objetivo) {
       const d = await diaPVPC(f);
@@ -116,7 +123,7 @@ async function main() {
   // Ventana deslizante : nada anterior a DIAS días.
   const limite = addDays(hoy, -DIAS);
   hist.dias = Object.fromEntries(Object.entries(hist.dias).filter(([f]) => f >= limite).sort(([a], [b]) => a.localeCompare(b)));
-  hist.fuente = 'Red Eléctrica, e·sios, archivo 70 « PVPC 2.0TD », columnas PCB y TEUPCB (€/MWh) y COF2TD (perfil de consumo)';
+  hist.fuente = 'Red Eléctrica, e·sios, archivo 70 « PVPC 2.0TD », columnas PCB y TEUPCB (Península, Baleares y Canarias), CYM y TEUCYM (Ceuta y Melilla), €/MWh, y COF2TD (perfil de consumo)';
   escribir('pvpc-historico.json', hist);
 
   // Resumen ligero para los mini-simuladores (los importa el navegador): media de 30 días y perfil

@@ -51,14 +51,21 @@ export interface Factura {
 
 const r2 = (x: number) => Math.round(x * 100) / 100;
 
+/** Financiación del bono social vigente el día `fecha`, €/punto de suministro·año (Orden TED/1524/2025,
+ *  luego Orden TED/634/2026 desde el 26/06/2026; RD 216/2014, art. 8.4). */
+export function financiacionBonoAnual(fecha: string): number {
+  const per = P.bono_social_financiacion.periodos.find((p) => fecha >= p.desde && fecha <= p.hasta);
+  return per?.eur_cups_ano ?? P.bono_social_financiacion.eur_cups_ano;
+}
+
 export function factura(e: EntradaFactura): Factura {
   const region = e.region ?? 'peninsula';
-  const imp = impuestosDelDia(e.fecha, Math.max(e.kwP1, e.kwP2), region);
+  const imp = impuestosDelDia(e.fecha, Math.max(e.kwP1, e.kwP2), region, undefined, e.bono !== undefined && e.bono >= P.bono_social.descuento_severo);
   const potencia = e.potenciaLibreKwDia !== undefined
     ? e.potenciaLibreKwDia * Math.max(e.kwP1, e.kwP2) * e.dias
     : (e.kwP1 * POT_P1_PVPC + e.kwP2 * POT_P2_PVPC) * e.dias / 365;
   const energia = e.energia;
-  const financiacionBono = P.bono_social_financiacion.eur_cups_ano * e.dias / 365;
+  const financiacionBono = financiacionBonoAnual(e.fecha) * e.dias / 365;
   let descuentoBono = 0, kwhConDescuento = 0;
   if (e.bono && e.bono > 0) {
     const limite = (e.limiteAnualKwh ?? 0) * e.dias / 365;
