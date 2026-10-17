@@ -1,27 +1,53 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import LegalIdentity from '../../components/LegalIdentity.astro';
-import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { CLARITY_ID, CONTACT_EMAIL, GA4_ID, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
 import { route } from '../../i18n/routes';
-import { displayDate } from '../../lib/format';
 const lang = 'es';
+const title = `Política de privacidad – ${SITE_NAMES[lang]}`;
+const description = GA4_ID ? 'Medición de audiencia con Google Analytics y cookies, sin publicidad; los datos introducidos quedan en su navegador; registros del alojamiento; sus derechos.' : 'Los datos introducidos quedan en su navegador, sin cookies, registros del alojamiento: los tratamientos del sitio, sus derechos y la autoridad de control.';
 ---
-<PageLayout title={`Política de privacidad – ${SITE_NAMES[lang]}`} description="Privacidad en Precio Luz Real: los cálculos se hacen en tu navegador, no guardamos lo que escribes ni ponemos cookies. Qué datos técnicos existen y tus derechos según el RGPD." lang={lang} noindex={true} breadcrumbs={[{ label: 'Privacidad' }]} showAuthor={false}>
+{/* Page générée par scripts/gen-legal-pages.py (trame, décision GA4 du 2026-10-17). Ne pas
+     retoucher à la main : relancer le script. Un passage propre au site se garde entre
+     les marqueurs site:debut et site:fin. */}
+<PageLayout title={title} description={description} lang={lang} noindex={true} breadcrumbs={[{ label: 'Privacidad' }]} showAuthor={false}>
   <div class="prose prose-slate max-w-none">
     <h1>Política de privacidad</h1>
-    <h2>Responsable</h2>
+    <p>Esta página describe los tratamientos de datos personales ligados al uso de {SITE_URL}, conforme a los artículos 12 a 14 del Reglamento (UE) 2016/679 (RGPD) y de la Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).</p>
+    <h2>1. Responsable del tratamiento</h2>
     <LegalIdentity lang={lang} />
-    <h2>Lo que escribes</h2>
-    <p>Consumo, potencia, renta del hogar o cualquier otro valor de las calculadoras se procesa solo en tu navegador. No se envía a nosotros ni a nadie. Si usas el enlace para compartir, los valores aparecen en la dirección de la página y los ve quien la reciba.</p>
-    <h2>Sin cookies</h2>
-    <p>El sitio no pone cookies ni guarda nada en el almacenamiento local de tu navegador. Ver también la página de <a href={route('cookies', lang)}>cookies</a>.</p>
-    <h2>Medición anónima de estabilidad</h2>
-    <p>Si está activada, para comprobar que el sitio funciona (errores, tiempos de carga, clics que no hacen nada) usamos Microsoft Clarity en modo sin cookies: no se pone ninguna cookie, cada página vista recibe un identificador puntual, las visitas no se enlazan y el contenido de la página está enmascarado. Proveedor: Microsoft Ireland Operations Limited. Base jurídica: interés legítimo en un sitio que funcione (art. 6.1.f RGPD). Puedes oponerte bloqueando clarity.ms en tu navegador o escribiéndonos.</p>
-    <h2>Registros técnicos del alojamiento</h2>
-    <p>Como cualquier servidor, el alojamiento puede registrar brevemente la dirección IP y la hora para servir las páginas y evitar abusos. No tenemos acceso a esos registros para identificar a nadie. Datos del alojamiento: ver el <a href={route('terms', lang)}>aviso legal</a>.</p>
-    <h2>Correo</h2>
-    <p>Si escribes a <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>, tu dirección solo se usa para responder y se borra cuando se cierra el asunto, como máximo en doce meses.</p>
-    <h2>Tus derechos</h2>
-    <p>Tienes derecho de acceso, rectificación, supresión y oposición: escribe a la dirección anterior. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es) o ante la {LEGAL.supervisoryAuthority}, autoridad del país del editor. Actualizado el <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'es-ES')}</time>.</p>
+    <p>Para cualquier pregunta sobre sus datos: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. No se ha designado delegado de protección de datos, al no darse las condiciones del artículo 37 del RGPD.</p>
+    <h2>2. Lo que introduce se queda en su navegador</h2>
+    <p>Los cálculos se ejecutan en su navegador. Los importes, fechas y circunstancias que introduce <strong>no se envían a ningún servidor</strong>, no se guardan en ningún sitio y no se asocian a ningún identificador. El sitio no pide cuenta, nombre ni correo electrónico. Un enlace para compartir incluye sus datos en la dirección de la página: compártalo solo con quien usted elija.</p>
+    <h2>3. Tratamientos realizados</h2>
+    <h3>Registros del alojamiento</h3>
+    <p>El proveedor de alojamiento registra en cada petición la dirección IP, la fecha y la hora, la página solicitada, el navegador y la página de procedencia. Finalidad: seguridad del servicio y diagnóstico de averías. Base jurídica: el interés legítimo del titular (art. 6.1.f RGPD). Plazo: el de la política del proveedor.</p>
+    {GA4_ID ? (<>
+    <h3>Medición de audiencia con Google Analytics</h3>
+    <p>El sitio usa Google Analytics 4 para contar las visitas y saber qué páginas resultan útiles: páginas vistas, página de procedencia, duración de la visita, tipo de dispositivo y de navegador, país y ciudad aproximados. Para ello Google Analytics instala dos cookies en su dispositivo: <code>_ga</code>, que distingue a los visitantes con un identificador aleatorio, y <code>_ga_{GA4_ID.replace('G-', '')}</code>, que conserva el estado de la visita. Su duración está fijada en 13 meses como máximo (390 días) y no se prolonga en cada visita; Google prevé 2 años por defecto.</p>
+    <p>La dirección IP se anonimiza: Google Analytics 4 no la registra ni la conserva, solo la usa en el momento de la recogida para deducir un país y una ciudad aproximados. La dirección de página enviada a Google Analytics va sin sus parámetros, de modo que los datos de un enlace para compartir no se incluyen. El sitio no muestra publicidad: el almacenamiento publicitario, los datos publicitarios, la personalización de anuncios y las señales de Google están desactivados, y los datos de medición no se comparten con ningún anunciante.</p>
+    <p>Finalidad: medición de audiencia. Base jurídica: el interés legítimo del titular (art. 6.1.f RGPD). Proveedor: Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda. Conservación en Google: 14 meses para los datos de visitas e identificadores, después se suprimen; solo quedan totales anónimos.</p>
+    </>) : (<>
+    <h3>Sin medición de audiencia</h3>
+    <p>El sitio no instala cookies y no usa ninguna herramienta de analítica ni de publicidad.</p>
+    </>)}
+    {CLARITY_ID && (<>
+    <h3>Medición técnica de la estabilidad con Microsoft Clarity, sin cookies</h3>
+    <p>Para detectar errores, páginas lentas y botones que no responden, el sitio usa Microsoft Clarity en modo sin cookies: Clarity no instala cookies, cada página vista recibe un identificador propio y el texto de las páginas y sus datos quedan ocultos. Clarity recibe la estructura de la página, los clics, el desplazamiento, el tipo de dispositivo, los tiempos de carga y los errores. Finalidad: estabilidad del sitio. Base jurídica: el interés legítimo del titular (art. 6.1.f RGPD). Proveedor: Microsoft Ireland Operations Limited, One Microsoft Place, South County Business Park, Leopardstown, Dublin 18, Irlanda. Conservación: 30 días para las grabaciones de páginas, 13 meses como máximo para los datos agregados.</p>
+    </>)}
+    <h3>Mensajes que nos envía</h3>
+    <p>Si escribe a la dirección de contacto, su correo y su mensaje se conservan el tiempo necesario para responderle y, en su caso, corregir un error, y se suprimen como tarde tres años después del último intercambio. Base jurídica: el interés legítimo del titular (art. 6.1.f RGPD).</p>
+    <h2>4. Destinatarios</h2>
+    <p>Ningún dato se vende, alquila ni cede. Solo acceden el proveedor de alojamiento{GA4_ID && ', Google Ireland Limited para Google Analytics'}{CLARITY_ID && ', Microsoft Ireland Operations Limited para Clarity'}, como encargados del tratamiento según el artículo 28 del RGPD. Ninguna red publicitaria interviene en el sitio.</p>
+    <h2>5. Transferencias fuera de la Unión Europea</h2>
+    <p>Los registros del alojamiento pueden tratarse en Estados Unidos.{GA4_ID && ' Los datos de Google Analytics pueden transferirse a Google LLC, en Estados Unidos.'}{CLARITY_ID && ' Los de Clarity pueden transferirse a Microsoft Corporation, en Estados Unidos.'} Estas transferencias se basan en el Marco de Privacidad de Datos UE-EE. UU. (EU–U.S. Data Privacy Framework) y en las cláusulas contractuales tipo de la Comisión Europea.</p>
+    <h2>6. Sus derechos</h2>
+    <p>Tiene derecho de acceso, rectificación, supresión, limitación, oposición y portabilidad (artículos 15 a 22 del RGPD). Escriba a <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>; respondemos en el plazo de un mes. Sin cuentas de usuario, lo habitual es que no tengamos ningún dato que le identifique, y se lo diremos.</p>
+    {GA4_ID && (<p>Para oponerse a la medición de audiencia sin escribirnos: bloquee o elimine las cookies en la configuración de su navegador, o instale el <a href="https://tools.google.com/dlpage/gaoptout" rel="nofollow noopener" target="_blank">complemento de inhabilitación de Google Analytics</a>. El sitio funciona igual.</p>)}
+    {CLARITY_ID && (<p>Para la medición de estabilidad: bloquee el dominio <code>clarity.ms</code> en su navegador o con un bloqueador de contenidos.</p>)}
+    <p>Puede presentar una reclamación ante la autoridad de control: {LEGAL.supervisoryAuthority} (<a href={LEGAL.supervisoryAuthorityUrl} rel="nofollow noopener" target="_blank">{LEGAL.supervisoryAuthorityUrl}</a>). En España, también puede reclamar ante la Agencia Española de Protección de Datos (AEPD).</p>
+    <h2>7. Sin decisiones automatizadas</h2>
+    <p>El resultado de un cálculo es una estimación hecha a petición suya, con sus datos, en su navegador. No produce efectos jurídicos y no es una decisión automatizada en el sentido del artículo 22 del RGPD. No se elaboran perfiles.</p>
+    <p>Véase también la página de <a href={route('cookies', lang)}>cookies</a>. Última actualización: {LAST_UPDATED}.</p>
   </div>
 </PageLayout>

@@ -1,17 +1,34 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
-import LegalIdentity from '../../components/LegalIdentity.astro';
-import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, LEGAL, SITE_NAMES, SITE_URL } from '../../data/site-config';
+import { CLARITY_ID, CONTACT_EMAIL, GA4_ID, LAST_UPDATED, SITE_NAMES } from '../../data/site-config';
 import { route } from '../../i18n/routes';
-import { displayDate } from '../../lib/format';
 const lang = 'es';
+const title = `Cookies – ${SITE_NAMES[lang]}`;
+const description = GA4_ID ? 'Cookies de medición de audiencia de Google Analytics y ninguna más: nombres, finalidad, duración máxima de 13 meses, proveedor y cómo oponerse.' : 'El sitio no instala cookies: lo que introduce se queda en su navegador y no se guarda nada en su dispositivo.';
 ---
-<PageLayout title={`Cookies – ${SITE_NAMES[lang]}`} description="Precio Luz Real no pone cookies ni guarda nada en tu dispositivo: el precio de la luz, la factura y el coste de los aparatos se calculan en el navegador sin rastreadores." lang={lang} noindex={true} breadcrumbs={[{ label: 'Cookies' }]} showAuthor={false}>
+{/* Page générée par scripts/gen-legal-pages.py (trame, décision GA4 du 2026-10-17). Ne pas
+     retoucher à la main : relancer le script. Un passage propre au site se garde entre
+     les marqueurs site:debut et site:fin. */}
+<PageLayout title={title} description={description} lang={lang} noindex={true} breadcrumbs={[{ label: 'Cookies' }]} showAuthor={false}>
   <div class="prose prose-slate max-w-none">
     <h1>Cookies</h1>
-    <p>Este sitio no pone cookies y no usa el almacenamiento local del navegador. Las calculadoras no necesitan guardar nada: todo se recalcula cuando cambias un valor.</p>
-    <h2>Sin rastreo</h2><p>No hay botones de redes sociales ni rastreadores publicitarios. Por eso no hay banner de cookies. Si se activa la medición de estabilidad, Microsoft Clarity funciona sin cookies y con el contenido enmascarado: no guarda nada en tu dispositivo.</p>
-    <h2>Calculadora insertada</h2><p>La calculadora que otras webs insertan tampoco pone cookies. Más en la <a href={route('privacy', lang)}>política de privacidad</a>.</p>
-    <p>Preguntas: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Actualizado el <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'es-ES')}</time>.</p>
+    {GA4_ID ? (<>
+    <p>El sitio instala cookies de medición de audiencia de Google Analytics y solo esas: ninguna cookie publicitaria ni de redes sociales. El detalle de los tratamientos está en la <a href={route('privacy', lang)}>política de privacidad</a>.</p>
+    <h2>Cookies instaladas</h2>
+    <table><thead><tr><th>Nombre</th><th>Proveedor</th><th>Finalidad</th><th>Duración</th></tr></thead><tbody>
+    <tr><td><code>_ga</code></td><td>Google Analytics</td><td>Distinguir a los visitantes con un identificador aleatorio</td><td>13 meses como máximo (390 días)</td></tr>
+    <tr><td><code>_ga_{GA4_ID.replace('G-', '')}</code></td><td>Google Analytics</td><td>Conservar el estado de la visita en curso</td><td>13 meses como máximo (390 días)</td></tr>
+    </tbody></table>
+    <p>Estas duraciones no se prolongan en cada visita; Google prevé 2 años por defecto y el sitio las reduce. Finalidad: medición de audiencia (páginas vistas, procedencia, dispositivo, país aproximado). La dirección IP se anonimiza: Google Analytics 4 no la registra ni la conserva. Sin publicidad ni cesión publicitaria: el almacenamiento publicitario, la personalización de anuncios y las señales de Google están desactivados.</p>
+    <p>Proveedor: Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda. Los datos pueden transferirse a Google LLC, en Estados Unidos, en el marco del EU–U.S. Data Privacy Framework y de las cláusulas contractuales tipo de la Comisión Europea. Conservación en Google: 14 meses. Base jurídica: el interés legítimo del titular (art. 6.1.f RGPD).</p>
+    <h2>Cómo oponerse a estas cookies</h2>
+    <p>Bloquee o elimine las cookies en la configuración de su navegador, o instale el <a href="https://tools.google.com/dlpage/gaoptout" rel="nofollow noopener" target="_blank">complemento de inhabilitación de Google Analytics</a>. El sitio y sus calculadoras funcionan igual.</p>
+    </>) : (<>
+    <p>El sitio <strong>no instala cookies</strong>. El detalle de los tratamientos está en la <a href={route('privacy', lang)}>política de privacidad</a>.</p>
+    </>)}
+    {CLARITY_ID && (<><h2>Microsoft Clarity, sin cookies</h2><p>La estabilidad de las páginas se mide con Microsoft Clarity en modo sin cookies: Clarity no instala cookies, cada página vista recibe un identificador de un solo uso y el contenido y sus datos quedan ocultos. Bloquear <code>clarity.ms</code> la detiene.</p></>)}
+    <h2>Lo que introduce</h2>
+    <p>Los cálculos se hacen en su navegador: lo que introduce no se envía a ningún servidor y desaparece al cerrar la página.</p>
+    <p>Preguntas: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Última actualización: {LAST_UPDATED}.</p>
   </div>
 </PageLayout>
