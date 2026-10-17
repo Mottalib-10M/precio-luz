@@ -1,5 +1,5 @@
 /** Configuration centrale du site (générée par new-site.py). */
-export const SITE_URL = "https://precioluzreal.com";
+export const SITE_URL = "https://precioluzreal.es";
 export const SITE_NAMES: Record<string, string> = {"es": "Precio Luz Real", "en": "Precio Luz Real"};
 export const LANG_TAGS: Record<string, string> = {"es": "es-ES", "en": "en-ES"};
 export const OG_LOCALES: Record<string, string> = {"es": "es_ES", "en": "en_GB"};
@@ -18,7 +18,7 @@ export const AUTHOR_DESC: Record<string, string> = {"es": "Radif Partners public
  *  themes reellement traites par le site, pas une liste de mots-cles : un sujet
  *  declare ici sans page qui le couvre est une declaration fausse. */
 export const KNOWS_ABOUT: Record<string, string[]> = {"es": ["PVPC", "Precio de la electricidad", "Peajes y cargos", "Bono social eléctrico", "Potencia contratada"], "en": ["PVPC regulated tariff", "Electricity prices in Spain", "Network tolls and charges", "Social electricity discount", "Contracted power"]};
-export const CONTACT_EMAIL = "contacto@precioluzreal.com";
+export const CONTACT_EMAIL = "contacto@precioluzreal.es";
 export const THEME_COLOR = '#AA151B';
 export const LOGO_SYMBOL = 'eclair';
 export const BING_VERIFY_CODE = '';

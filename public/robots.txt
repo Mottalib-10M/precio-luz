@@ -3,4 +3,4 @@ Allow: /
 
 Disallow: /*?*
 
-Sitemap: https://precioluzreal.com/sitemap-index.xml
+Sitemap: https://precioluzreal.es/sitemap-index.xml
